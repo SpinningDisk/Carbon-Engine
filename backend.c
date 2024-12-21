@@ -25,6 +25,7 @@ typedef struct{
     unsigned int vertex_count;
     vert *vertices; 
     char *name;
+    vert *center;
 }obj;
 
 
@@ -40,7 +41,27 @@ obj __init_object__(obj object, char Name[30]){
     base_vert.z = 0.0f;
     object.vertices[0] = base_vert;
     object.vertex_count = 0;
+    
+    object.center = (vert*)malloc(sizeof(vert));
+    object.center[0].x = 0.0f;
+    object.center[0].y = 0.0f;
+    object.center[0].z = 0.0f;
+    
     return object;
+};
+vert* calculate_obj_center(vert* vertices, int vert_amount){
+    vert *new_center = (vert*)malloc(sizeof(vert));
+    float new_cords[3];
+    for(int i=0;i<vert_amount;i++){
+        new_cords[0] += vertices[i].x/vert_amount;
+        new_cords[1] += vertices[i].y/vert_amount;
+        new_cords[2] += vertices[i].z/vert_amount;  
+        printf("%f, %f, %f  for %f, %f, %f\n", vertices[i].x/vert_amount, vertices[i].y/vert_amount, vertices[i].z/vert_amount, vertices[i].x, vertices[i].y, vertices[i].z);
+    };
+    new_center[0].x = new_cords[0];
+    new_center[0].y = new_cords[1];
+    new_center[0].z = new_cords[2];
+    return new_center;
 };
 obj append_vert_to_obj(float x, float y, float z, obj object){
     vert appended_vert;
@@ -51,6 +72,7 @@ obj append_vert_to_obj(float x, float y, float z, obj object){
     object.vertices = new_verts;
     object.vertices[object.vertex_count] = appended_vert;
     object.vertex_count++;
+    object.center = calculate_obj_center(object.vertices, object.vertex_count);
     return object;
 };
 obj append_vert_to_obj_by_vert(vert new_vert, obj object){
@@ -58,6 +80,7 @@ obj append_vert_to_obj_by_vert(vert new_vert, obj object){
     object.vertices = new_verts;
     object.vertices[object.vertex_count] = new_vert;
     object.vertex_count++;
+    object.center = calculate_obj_center(object.vertices, object.vertex_count);
     return object;
 }
 obj change_vertex(unsigned int index, float new_x, float new_y, float new_z, obj object){
@@ -81,6 +104,8 @@ void debug_obj(obj object){
     };
     printf("        vertex_count:\n");
     printf("            %d\n", object.vertex_count+1);
+    printf("        center:\n");
+    printf("            %f, %f, %f", object.center[0].x, object.center[0].y, object.center[0].z);
 }
 
 typedef struct{
@@ -130,8 +155,9 @@ scene __init_scene__(scene Scene, char name[30]){
     vert8.y = 0.5f;
     vert8.z = 0.5f;
 
-    base_cube = change_vertex_by_vert(0, vert1, base_cube);
-    base_cube = append_vert_to_obj_by_vert(vert2,  base_cube);
+    base_cube = append_vert_to_obj_by_vert(vert1,  base_cube);
+    /*base_cube = change_vertex_by_vert(0, vert1, base_cube);
+    */base_cube = append_vert_to_obj_by_vert(vert2,  base_cube);
     base_cube = append_vert_to_obj_by_vert(vert3, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert4, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert5, base_cube);
@@ -164,8 +190,12 @@ void debug_scn(scene Scene){
             printf("                    %f, %f, %f\n", Scene.objects[Scene.obj_count-1-i].vertices[j].x, Scene.objects[Scene.obj_count-1-i].vertices[j].y, Scene.objects[Scene.obj_count-1-i].vertices[j].z);
         };
         printf("                vertex_count:\n");
-        printf("                    %d\n", Scene.objects[Scene.obj_count-1-i].vertex_count+1);    }
-    return;
+        printf("                    %d\n", Scene.objects[Scene.obj_count-1-i].vertex_count+1);
+        printf("                center:\n");
+        printf("                    %f, %f, %f\n", Scene.objects[Scene.obj_count-1-i].center[0].x, Scene.objects[Scene.obj_count-1-i].center[0].y, Scene.objects[Scene.obj_count-1-i].center[0].z);
+    
+        };
+        return;
 }
 
 
@@ -219,19 +249,51 @@ scene create_obj(scene Scene){
     return Scene;
 };
 
-scene move_object_vec(scene Scene){                                         //and this has conflicting types;
-    printf("------------------------------------------------------------ using vector as method of movement-------------------------------------------------\n@ ");
-    return Scene;
+obj move_object_vec(obj Object){
+    float vector[3];
+    printf("------------------------------------------------------------enter x coordinate of vector:------------------------------------------------------------\n##");
+    scanf("%f", &vector[0]);
+    printf("------------------------------------------------------------enter y coordinate of vector:------------------------------------------------------------\n##");
+    scanf("%f", &vector[1]);
+    printf("------------------------------------------------------------enter z coordinate of vector:------------------------------------------------------------\n##");
+    scanf("%f", &vector[2]);
+    for(int i=0; i<Object.vertex_count;i++){
+        Object.vertices[i].x = Object.vertices[i].x+vector[0];
+        Object.vertices[i].y = Object.vertices[i].y+vector[1];
+        Object.vertices[i].z = Object.vertices[i].z+vector[2];
+    };
+    Object.center[0].x = Object.center[0].x+vector[0];
+    Object.center[0].y = Object.center[0].y+vector[1];
+    Object.center[0].z = Object.center[0].z+vector[2];
+    return Object;
 };
-scene move_object_pos(scene Scene){
+obj move_object_pos(obj Object){
     printf("using position as method of movement\n");
-    return Scene;
+    return Object;
 };
 scene move_object(scene Scene){
     char name[30];
     char vec_or_pos[9];
     printf("------------------------------------------------------------ enter name of object to move------------------------------------------------------------ \n@ ");
     scanf("%29s", &name);
+        obj Object;
+    bool obj_found = false;
+    for(int i=0;i<Scene.obj_count;i++){
+        if(strcmp(name, Scene.objects[i].name)==0){
+            printf("found %s at index %d\n", Scene.objects[i].name, i);
+            obj Object = Scene.objects[i];
+            obj_found = true;
+            break;
+        };
+    };
+    switch(obj_found) {
+        case false:
+            printf("invalid name/name not found\n");
+            Scene = move_object(Scene);
+            return Scene;
+        case true:
+            break;
+    };
     if(strlen(name)>=29){
         printf("name too long\n\tit is very likely that this object doesn't exist\n\tin case it does, please report this as a bug at: example.com\n");
         Scene = move_object(Scene);
@@ -240,21 +302,22 @@ scene move_object(scene Scene){
     printf("------------------------------------------------------------ enter wether to use vector or new position---------------------------------------------- \n>");
     scanf("%8s", &vec_or_pos);
     
+
     if(strlen(vec_or_pos)>=8){
         printf("no such action found\n\tplease try again\n");
         Scene = move_object(Scene);
         return Scene;
     };
     if(strcmp("vector", vec_or_pos)==0){
-        Scene = move_object_vec(Scene);                             //for some goddamn reason, this is an int;
+        Object = move_object_vec(Object);
     }else if(strcmp("vec", vec_or_pos)==0){
-        Scene = move_object_vec(Scene);
+        Object = move_object_vec(Object);
     }else if(strcmp("position", vec_or_pos)==0){
-        Scene = move_object_pos(Scene);
+        Object = move_object_pos(Object);
     }else if((strcmp("pos", vec_or_pos)==0)){
-        Scene = move_object_pos(Scene);
+        Object = move_object_pos(Object);
     }else{
-        printf("received: %s; not found in if-else tree\n", vec_or_pos);
+        printf("received: %s; not an option\n", vec_or_pos);
         Scene = move_object(Scene);
     };
     return Scene;
