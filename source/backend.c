@@ -27,6 +27,11 @@ typedef struct{
     char *name;
     vert *center;
 }obj;
+typedef struct{
+    obj *objects;
+    unsigned int obj_count;
+    char *name;
+}scene;
 
 
 obj __init_object__(obj object, char Name[30]){
@@ -40,7 +45,7 @@ obj __init_object__(obj object, char Name[30]){
     base_vert.y = 0.0f;
     base_vert.z = 0.0f;
     object.vertices[0] = base_vert;
-    object.vertex_count = 0;
+    object.vertex_count = 1;
     
     object.center = (vert*)malloc(sizeof(vert));
     object.center[0].x = 0.0f;
@@ -56,11 +61,12 @@ vert* calculate_obj_center(vert* vertices, int vert_amount){
         new_cords[0] += vertices[i].x/vert_amount;
         new_cords[1] += vertices[i].y/vert_amount;
         new_cords[2] += vertices[i].z/vert_amount;  
-        printf("%f, %f, %f  for %f, %f, %f\n", vertices[i].x/vert_amount, vertices[i].y/vert_amount, vertices[i].z/vert_amount, vertices[i].x, vertices[i].y, vertices[i].z);
+        printf("%f, %f, %f for %d\n", vertices[i].x, vertices[i].y, vertices[i].z, i);
     };
     new_center[0].x = new_cords[0];
     new_center[0].y = new_cords[1];
     new_center[0].z = new_cords[2];
+    printf("coc:    returning: %f, %f, %f\n", new_center[0].x, new_center[0].y, new_center[0].z);               //if x<1:   cannot take x value of .b (need 0.b): will result in corrupted y (try: create->name->2->1,0,0->.5,0,0; notice the .5, not 0.5);
     return new_center;
 };
 obj append_vert_to_obj(float x, float y, float z, obj object){
@@ -72,7 +78,6 @@ obj append_vert_to_obj(float x, float y, float z, obj object){
     object.vertices = new_verts;
     object.vertices[object.vertex_count] = appended_vert;
     object.vertex_count++;
-    object.center = calculate_obj_center(object.vertices, object.vertex_count);
     return object;
 };
 obj append_vert_to_obj_by_vert(vert new_vert, obj object){
@@ -80,7 +85,6 @@ obj append_vert_to_obj_by_vert(vert new_vert, obj object){
     object.vertices = new_verts;
     object.vertices[object.vertex_count] = new_vert;
     object.vertex_count++;
-    object.center = calculate_obj_center(object.vertices, object.vertex_count);
     return object;
 }
 obj change_vertex(unsigned int index, float new_x, float new_y, float new_z, obj object){
@@ -108,11 +112,7 @@ void debug_obj(obj object){
     printf("            %f, %f, %f", object.center[0].x, object.center[0].y, object.center[0].z);
 }
 
-typedef struct{
-    obj *objects;
-    unsigned int obj_count;
-    char *name;
-}scene;
+
 scene __init_scene__(scene Scene, char name[30]){
     Scene.objects = (obj*)malloc(sizeof(obj));
     Scene.name = (char*)malloc(strlen(name)*sizeof(char));
@@ -155,9 +155,8 @@ scene __init_scene__(scene Scene, char name[30]){
     vert8.y = 0.5f;
     vert8.z = 0.5f;
 
-    base_cube = append_vert_to_obj_by_vert(vert1,  base_cube);
-    /*base_cube = change_vertex_by_vert(0, vert1, base_cube);
-    */base_cube = append_vert_to_obj_by_vert(vert2,  base_cube);
+    base_cube = change_vertex_by_vert(0, vert1, base_cube);
+    base_cube = append_vert_to_obj_by_vert(vert2,  base_cube);
     base_cube = append_vert_to_obj_by_vert(vert3, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert4, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert5, base_cube);
@@ -245,6 +244,8 @@ scene create_obj(scene Scene){
         scanf("%f", &coords[2]);
         new_obj = append_vert_to_obj(coords[0], coords[1], coords[2], new_obj);
     };
+    new_obj.center = calculate_obj_center(new_obj.vertices, new_obj.vertex_count);
+
     Scene = append_obj_to_scene_by_object(Scene, new_obj);
     return Scene;
 };
@@ -322,103 +323,3 @@ scene move_object(scene Scene){
     };
     return Scene;
 };
-
-int main(scene prev_Scene){
-    scene Scene;
-    if(prev_Scene.obj_count!=0){
-        char test_name[30] = "this is a test";
-        Scene = __init_scene__(Scene, test_name);
-    }else{
-        Scene = prev_Scene;
-    };
-    while(1){
-        char action[16] = "";
-        printf(">> ");
-        scanf("%15s", &action);                         
-        if(strlen(action)>=15){
-            printf("no such action found;\n\tplease try again!\n\tand because this program is stupid, \n\twe have decided to just exit it now!\n");
-            break;
-        };
-        char *ops[32][16] = {"create"};
-        *ops[1] = "move";
-        *ops[2] = "move_vert";
-        *ops[3] = "mv";
-        *ops[4] = "append_vert";
-        *ops[5] = "ap";
-        *ops[6] = "help";
-        *ops[7] = "exit";
-        *ops[8] = "default";
-        *ops[9] = "def";
-        *ops[10] = "save";
-        *ops[11] = "debug_object";
-        *ops[12] = "debug_scene";
-        *ops[13] = "edit_object";
-        *ops[14] = "edit_scene";
-        *ops[15] = "create_link";
-        *ops[16] = "cl";
-        *ops[17] = "create_face";
-        *ops[18] = "cf";
-        int action_index = GetIndex(action, ops);
-        bool close_program = false;
-        switch(action_index){                               //turn this into binary search (perchance through maps, which eliminates need for GetIndex);
-            case -1:
-                printf("not a valid option;\n");
-                break;
-            case 0:
-                Scene = create_obj(Scene);
-                break;
-            case 1:
-                move_object(Scene);
-                break;
-            case 2:
-                printf("moving vertex...\n");
-                break;
-            case 3:
-                printf("moving vertex...\n");
-                break;
-            case 4:
-                printf("appending vert...\n");
-                break;
-            case 5:
-                printf("appending vert...\n");
-                break;
-            case 6:
-                printf("printing this menue...\n");
-                printf("...\n");
-                printf("...wait a second...\n");
-                break;
-            case 7:
-                printf("bye!\n");
-                close_program = true;
-                break;
-            case 8:
-                printf("creating one of many def objects...\n");
-                break;
-            case 9:
-                printf("creating one of many def objects...\n");
-                break;
-            case 10:
-                printf("writing to 'Scene.ce'\n");
-                break;
-            case 11:
-                for(int i=0;i<Scene.obj_count;i++){
-                    debug_obj(Scene.objects[i]);
-                }
-                // store names in a list, get index, and then debug that
-                break;
-            case 12:
-                debug_scn(Scene);
-                break;
-            case 13:
-
-        };
-        if(close_program==true){
-            break;
-        };
-
-    };
-    for(int object_count=0; object_count<Scene.obj_count; object_count++){
-        free(Scene.objects[object_count].vertices);
-    };
-    return 0;
-}
