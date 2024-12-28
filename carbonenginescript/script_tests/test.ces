@@ -1,0 +1,58 @@
+create(Hans)                                                            // create an object "Hans"
+Hans.vert_count = 3                                                     // set "Hans" vertex count
+Hans.v1.x = 1.1                                                         // set x, y and z coordinates of "Hans" manually
+Hans.v1.y = 2.2
+Hans.v2.z = 3.3
+Hans.v2.x = 1.1
+Hans.v2.y = 1.2
+Hans.v2.z = 2.1
+Hans.v3.x = 2.2
+Hans.v3.x = 2.3
+
+
+vMove(Hans)->vec(1, 0, 0)                                                // move hans using a Vector (a vector of value (1, 0, 0))
+
+create(Peter)                                                           // create object called "Peter"
+Peter.vert_count = 4                                                    // set "Peters vertex count"
+Peter.v1 = (->Hans.v1.x, ->Hans.v1.y, ->Hans.v1.z)                      // set "Peter"s first vertex; "->Hans.v1.x" means "x coordinate of Hans' first vertex, and change if this changes";
+Peter.v2 = (55.2, -1.2, 0)                                              // set "Peter"s second vertex; demonstrate that you don't have to go through the nightare that is the above (Hans)
+Peter.v3 = vMove(->Hans.v1.x, 1.1, ->Peter.v2.z)                        // set "Peter"s third vertex; this time we even reference a value of it's own vertices
+Peter.v4 = zyx(0, -1.2, 55)                                             // same as Peters 2 vertex; abc(n, m, o) indicates: objects a coordinate is 
+                                                                        // n, b coordinate is m, and c coordinnate is o (a, b, c) are of (x, y, z) (yes, you could do xxx(1, 2, 3);
+                                                                        // last value overwrites previous ones); defaults to xyz, if nothing else is provided
+// this is a comment!
+Move(Peter)->(1, 1, 1)                                                  // sets object center to (1, 1, 1); center is automatically calculated uppon update to object (which can be disabled; demonstrated
+                                                                        // further down)
+Hans.e1 = ->v1_->v2                                                         
+Hans.e2 = ->v2_->v3                                                     // creates edges between two vertices (notice that we're not using Hans.v1 here, since only own vertices can be used)
+Hans.e2 = ->v3_->v4
+
+mod(create_edges):                                                      // create a modification (similar to def in Python) with the name "create_edges"; mods can only be used on objs;    
+    takes: num_edges(int);                                              // "takes" keyword to list inputs, seperated by ";". "(int)" is used as a typehint; for type checks: <type>
+    for vert in vertices-ind(1):                                        // for loops; we've got them; notice how we call vertices instead of object.vertices; mod has to be used on an object 
+        /                                                               // when calling "vertices" here, we call the vertices of the object calling the function; ind(1) is the last index of this list
+        e[cui] = ->v[cui]_->v[cui+1]                                    // we now define each edge; cui is the current index/loop count; this is automatically calculated (when used) when a loop is 
+        /                                                               // used. the x[y] syntax is used to append to a variable name; for instance, e[1] is the same as e1, though [x] allows for 
+        /                                                               // processing of the index;
+
+proc = Peter.create_edges                                               // functions are treated like variables here, until they're run; here, we assign proc (a function) to a function taking Peter
+/                                                                       // as "main-obj" (have to find a better word for this), such that by calling vertices inside of create-edges, we call 
+/                                                                       // Peter.vertices; this is usefull, because we can now reuse functions with already existing inputs, which makes it more efficient
+/                                                                       // (have to phrase the above better)
+proc.num_edges = Peter.vert_count                                       // sets an input. this is, too, treated like a variable; notice: we could also use the arrow notation here to dynamically
+/                                                                       // change "num_edges" based around the current state
+proc.run(Peter)                                                         // acctually calls the function, and stores the modified object in "Peter"
+
+Peter.center.auto_set = False                                           // disables auto setting center of obbject (promised in above documentation)
+vMove(Peter.center)->Vec(-Peter.center.x, -Peter.center.y, -Peter.center.z)// Moves Peter.center to (0, 0, 0), because Peter.center.x-Peter.center.x = 0
+
+
+
+
+
+log(Peter.v5)                                                           // results in OutOfRange (OOR) Error
+1/0                                                                     // results in ZeroDivision (ZD) Error
+1*"test"                                                                // results in TypeCollision (TC) Error
+create("abcdefghijklmnopqrstuvwxyz12345")                               // results in InputOverflow (IO) Error
+log(Jörg.v1)                                                            // results in NotFound (NF) Error
+log("Hello, "+load(not_existing_file.cee))                              // results in NotSafedFileWelcomed... (NSFW) Error

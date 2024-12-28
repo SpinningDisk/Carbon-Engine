@@ -202,6 +202,7 @@ scene create_obj(scene Scene){
     char name[30];
     unsigned int vert_amount;
     obj new_obj;
+    printf("Hey! I'm new...\n");
     printf("------------------------------------------------------------ Enter Name of new object------------------------------------------------------------");
     printf("\n@ ");
     scanf("%29s", &name);
@@ -322,4 +323,21 @@ scene move_object(scene Scene){
         Scene = move_object(Scene);
     };
     return Scene;
+};
+void free_obj_verts(obj Object){
+    free(Object.vertices);
+    return;
+};
+void del_obj(obj Object){
+    free_obj_verts(Object);
+    free(Object.name);
+    free(Object.center);
+    free(&Object.vertex_count);
+};
+void del_scn(scene Scene){
+    for(int i=0;i<Scene.obj_count;i++){
+        del_obj(Scene.objects[i]);
+    };
+    free(Scene.name);
+    free(&Scene.obj_count);
 };

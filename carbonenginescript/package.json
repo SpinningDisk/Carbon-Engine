@@ -1,0 +1,25 @@
+{
+  "name": "carbonenginescript",
+  "displayName": "CarbonEngineScript",
+  "description": "Language/shell for interaction in a 3d space using a vertex system",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "ces",
+      "aliases": ["CarbonEngineScript", "ces"],
+      "extensions": [".ces"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "ces",
+      "scopeName": "test.ces",
+      "path": "./syntaxes/ces.tmLanguage.json"
+    }]
+  }
+}

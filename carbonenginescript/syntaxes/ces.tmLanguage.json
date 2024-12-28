@@ -1,0 +1,100 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "CarbonEngineScript",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#meths"
+		},
+		{
+			"include": "#attributes"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.ces",
+				"match": "\\b(if|while|for)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.ces",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ces",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"name": "comment.line.double-slash.ces",
+			"begin": "//",
+			"end": "\n",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ces",
+					"match": "\\\\."
+				}
+			]
+		},
+		"attributes": {
+			"begin": "[?!\\#]*(\\.)([^\\b\\.\\s=\\)]*)",
+			"beginCaptures": {
+				"1":{
+				},
+				"2":{
+					"name": "entity.other.inherited-class"
+				}
+			},
+			"end": "(\\b|\\s|\n|=|,| )",
+			"endCaptures": {
+				"1":{
+					"name": "comment.ces"
+				}
+			}
+		},
+		"meths": {
+			"name": "constant.language.ces",
+			"begin": "(\\b(create|vMove|Move|mov|run|Vec|log)\\b)(\\()",
+			"beginCaptures": {
+				"1":{
+					"name": "entity.name.function.ces"
+				},
+				"2":{
+					"name": "constant.character"
+				}
+			},
+			"end": "\\)",
+			"endCaptures": {
+				"0": {
+					"name": "constant.character"
+				}
+			},
+			"patterns": [
+				{
+					"name": "variable.parameter.ces",
+					"match": "[^,\\)]+"
+				},
+				{
+					"name": "punctuation.separator.comma.ces",
+					"match": ","
+				},
+				{
+					"name": "constant.character",
+					"match": "[\\(,\\)]"
+				}
+			]
+		}
+	},
+	"scopeName": "test.ces"
+}
