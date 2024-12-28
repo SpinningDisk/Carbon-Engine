@@ -1,1 +1,4 @@
-this is a one lined test without a dot
+this
+is
+    a
+TEST!!?

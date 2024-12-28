@@ -1,0 +1,4 @@
+###################################
+    create two kinds of files:
+        filetype containing final stage (like .blend)
+        filetype containing executable being able to log out data at specific action sequence(like .o)
