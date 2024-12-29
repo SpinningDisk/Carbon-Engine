@@ -1,0 +1,2 @@
+Hello!
+hit one newline and one token (exit)
