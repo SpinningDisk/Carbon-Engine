@@ -1,0 +1,13 @@
+{
+    "iconDefinitions": {
+        "mIcon": {
+            "iconPath": "./icon_light.svg"
+        }
+    },
+    "fileExtensions": {
+        "ces": "mIcon"
+    },
+    "languageIds": {
+        "ces": "mIcon"
+    }
+}

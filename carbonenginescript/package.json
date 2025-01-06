@@ -20,6 +20,13 @@
       "language": "ces",
       "scopeName": "test.ces",
       "path": "./syntaxes/ces.tmLanguage.json"
-    }]
+    }],
+    "iconThemes": [
+      {
+        "id": "myTheme",
+        "label": "My File Icon",
+        "path": "./images/my-icon-theme.json"
+      }
+    ]
   }
 }

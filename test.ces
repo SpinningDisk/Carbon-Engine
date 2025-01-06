@@ -1,4 +1,4 @@
-#system: move_center_auto=False;
+#system: move_center_auto=False#
 
 create(Hans)
 exit
@@ -19,6 +19,8 @@ for i in [0, 7]:
             Hans.v[cui_i].z = -0.5
         else:
             Hans.v[cui_i].z = 0.5
+
+
 
 
 

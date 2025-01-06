@@ -1,3 +1,4 @@
+#system: enable_dev=True#                                               // disables Errors, and announcingly skips lines if Error occours durring execution
 create(Hans)                                                            // create an object "Hans"
 Hans.vert_count = 3                                                     // set "Hans" vertex count
 Hans.v1.x = 1.1                                                         // set x, y and z coordinates of "Hans" manually
@@ -31,7 +32,7 @@ mod(create_edges):                                                      // creat
     takes: num_edges(int);                                              // "takes" keyword to list inputs, seperated by ";". "(int)" is used as a typehint; for type checks: <type>
     for vert in vertices-ind(1):                                        // for loops; we've got them; notice how we call vertices instead of object.vertices; mod has to be used on an object 
         /                                                               // when calling "vertices" here, we call the vertices of the object calling the function; ind(1) is the last index of this list
-        e[cui] = ->v[cui]_->v[cui+1]                                    // we now define each edge; cui is the current index/loop count; this is automatically calculated (when used) when a loop is 
+        e[cui_vert] = ->v[cui_vert]_->v[cui_vert+1]                     // we now define each edge; cui is the current index/loop count; this is automatically calculated (when used) when a loop is 
         /                                                               // used. the x[y] syntax is used to append to a variable name; for instance, e[1] is the same as e1, though [x] allows for 
         /                                                               // processing of the index;
 
@@ -44,7 +45,9 @@ proc.num_edges = Peter.vert_count                                       // sets 
 proc.run(Peter)                                                         // acctually calls the function, and stores the modified object in "Peter"
 
 Peter.center.auto_set = False                                           // disables auto setting center of obbject (promised in above documentation)
-vMove(Peter.center)->Vec(-Peter.center.x, -Peter.center.y, -Peter.center.z)// Moves Peter.center to (0, 0, 0), because Peter.center.x-Peter.center.x = 0
+vMove(Peter.center)->Vec(-Peter.center.x, -Peter.center.y, -Peter.center.z)         // Moves Peter.center to (0, 0, 0), because Peter.center.x-Peter.center.x = 0
+
+delete(Hans)
 
 
 
@@ -55,4 +58,9 @@ log(Peter.v5)                                                           // resul
 1*"test"                                                                // results in TypeCollision (TC) Error
 create("abcdefghijklmnopqrstuvwxyz12345")                               // results in InputOverflow (IO) Error
 log(Jörg.v1)                                                            // results in NotFound (NF) Error
-log("Hello, "+load(not_existing_file.cee))                              // results in NotSafedFileWelcomed... (NSFW) Error
+#system: use(not_a_library)#                                            // results in LibraryNotFound (LNF) Error
+#system: not_a_flag=False#                                              // results in NotAFlag (NAF) Error
+// log("Hello, "+load(not_existing_file.cee))                              // results in NotSafedFileWelcomed... (NSFW) Error       // deprecated yet important due to historical importantce
+#system: use(Technology)#                                               // results in NotAConvention (NAC) Error
+#system: use(Oxygen)#                                                   // results in NotAGoodIdea (NAGI) Error
+log[something]                                                          // results in WrongSyntax (WS) Error
