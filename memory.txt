@@ -15,3 +15,8 @@
                  x = 1->x<5
             
         the above program loops over x for five iterations, where it prints "Hello, World!" for each iteration;
+
+
+################################            <------short term
+
+fix case 11 (debug object) in run.c; it doesn't take input, and assigns nothing to it instead of listening to stdin

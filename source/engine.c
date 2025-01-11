@@ -3,27 +3,38 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
+#include <math.h>
 
-
-int GetIndex(char key[], char *values[32][16]){
-    int arr_size = (int)(sizeof(*values)/sizeof(*values[0]));
-    for(int i=0;i<arr_size; i++){
-        if(*values[i]!=NULL){
-            if(strcmp(key, *values[i])==0){
+int GetIndex(char* elm, char** array, int arr_size){
+    for(int i=0;i<arr_size;i++){
+        switch(strcmp(array[i], elm)){
+            case 0:
                 return i;
-            };
+            default:
+                break;
         };
     };
     return -1;
 };
 
-
 typedef struct vert{
     float x,y,z;
 }vert;
+typedef struct edges{
+    int a,b;
+}edge;
+typedef struct face{
+    int* edges;
+}face;
 typedef struct{
     unsigned int vertex_count;
     vert *vertices; 
+    unsigned int edge_count;
+    edge *edges;
+    unsigned int face_count;
+    face *faces;
+
     char *name;
     vert *center;
 }obj;
@@ -34,24 +45,23 @@ typedef struct{
 }scene;
 
 
-obj __init_object__(obj object, char Name[30]){
-    object.vertices = (vert*)malloc(sizeof(vert));
+obj __init_object__(obj object, char Name[31]){
+    object.vertices = (vert*)malloc(0);
+    object.edges = (edge*)malloc(0);
+    object.faces = (face*)malloc(0);
     object.name = (char*)malloc(strlen(Name)*sizeof(char));
     for(int i=0; i<strlen(Name); i++){
         object.name[i] = Name[i];
     };
-    vert base_vert;
-    base_vert.x = 0.0f;
-    base_vert.y = 0.0f;
-    base_vert.z = 0.0f;
-    object.vertices[0] = base_vert;
-    object.vertex_count = 1;
-    
+    object.vertex_count = 0;
+    object.edge_count = 0;
+    object.face_count = 0;
+
     object.center = (vert*)malloc(sizeof(vert));
     object.center[0].x = 0.0f;
     object.center[0].y = 0.0f;
     object.center[0].z = 0.0f;
-    
+
     return object;
 };
 vert* calculate_obj_center(vert* vertices, int vert_amount){
@@ -61,12 +71,10 @@ vert* calculate_obj_center(vert* vertices, int vert_amount){
         new_cords[0] += vertices[i].x/vert_amount;
         new_cords[1] += vertices[i].y/vert_amount;
         new_cords[2] += vertices[i].z/vert_amount;  
-        printf("%f, %f, %f for %d\n", vertices[i].x, vertices[i].y, vertices[i].z, i);
     };
     new_center[0].x = new_cords[0];
     new_center[0].y = new_cords[1];
     new_center[0].z = new_cords[2];
-    printf("coc:    returning: %f, %f, %f\n", new_center[0].x, new_center[0].y, new_center[0].z);               //if x<1:   cannot take x value of .b (need 0.b): will result in corrupted y (try: create->name->2->1,0,0->.5,0,0; notice the .5, not 0.5);
     return new_center;
 };
 obj append_vert_to_obj(float x, float y, float z, obj object){
@@ -99,17 +107,47 @@ obj change_vertex_by_vert(unsigned int index, vert new_vert, obj object){
     object.vertices[index] = new_vert;
     return object;
 }
-void debug_obj(obj object){
-    printf("obj-debuger:    \n");
+obj create_edge_by_index(int vert_a_index, int vert_b_index, obj object){
+    edge tmp_edge;
+    if(object.vertex_count<vert_a_index){
+        printf("IOOR Error at 'vert a'\n");
+        return object;
+    }else if(object.vertex_count<vert_b_index){
+        printf("IOOR Error at 'vert b'\n");
+        return object;
+    };
+
+    tmp_edge.a = vert_a_index;
+    tmp_edge.b = vert_b_index;
+    object.edge_count++;
+    edge* tmp_edges = (edge*)realloc(object.edges, sizeof(edge)*object.edge_count);
+    object.edges = tmp_edges;
+    object.edges[object.edge_count] = tmp_edge;
+    return object;
+}
+char* debug_obj(char* Name, scene Scene){
+    char* msg = (char*)malloc(sizeof(char)*17+17+17);
+    char** Scene_obj_names = (char**)malloc(sizeof(char*)*Scene.obj_count);
+    printf("do:     starting loop\n");
+    for(int i=0; i<Scene.obj_count; i++){
+        Scene_obj_names[i] = (char*)malloc(sizeof(Scene.objects[i].name));
+        Scene_obj_names[i] = Scene.objects[i].name;
+        printf("do:     just added: %s\n", Scene_obj_names[i]);
+    }
+    
+    int Index = GetIndex(Name, Scene_obj_names, Scene.obj_count);
+    printf("do:     index %d\n", Index);
+    /*printf("obj-debuger:    \n");
     printf("    debuggin: '%s'\n", object.name);
     printf("        vertices:\n");
-    for (int i=0; i<object.vertex_count+1; i++){
+    for (int i=0; i<object.vertex_count; i++){
         printf("            %f, %f, %f\n", object.vertices[i].x, object.vertices[i].y, object.vertices[i].z);
     };
     printf("        vertex_count:\n");
-    printf("            %d\n", object.vertex_count+1);
+    printf("            %d\n", object.vertex_count);
     printf("        center:\n");
-    printf("            %f, %f, %f", object.center[0].x, object.center[0].y, object.center[0].z);
+    printf("            %f, %f, %f", object.center[0].x, object.center[0].y, object.center[0].z);*/
+    return msg;
 }
 
 
@@ -155,7 +193,7 @@ scene __init_scene__(scene Scene, char name[30]){
     vert8.y = 0.5f;
     vert8.z = 0.5f;
 
-    base_cube = change_vertex_by_vert(0, vert1, base_cube);
+    base_cube = append_vert_to_obj_by_vert(vert1, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert2,  base_cube);
     base_cube = append_vert_to_obj_by_vert(vert3, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert4, base_cube);
@@ -163,12 +201,10 @@ scene __init_scene__(scene Scene, char name[30]){
     base_cube = append_vert_to_obj_by_vert(vert6, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert7, base_cube);
     base_cube = append_vert_to_obj_by_vert(vert8, base_cube);
-
+    
     Scene.objects[0] = base_cube;
 
-
     Scene.obj_count=1;
-
     return Scene;
 }
 scene append_obj_to_scene_by_object(scene Scene, obj Object){
@@ -185,65 +221,37 @@ void debug_scn(scene Scene){
         printf("        obj-debuger:    \n");
         printf("            debuggin: '%s'\n", Scene.objects[Scene.obj_count-1-i].name);
         printf("                vertices:\n");
-        for (int j=0; j<Scene.objects[Scene.obj_count-1-i].vertex_count+1; j++){
+        for (int j=0; j<Scene.objects[Scene.obj_count-1-i].vertex_count; j++){
             printf("                    %f, %f, %f\n", Scene.objects[Scene.obj_count-1-i].vertices[j].x, Scene.objects[Scene.obj_count-1-i].vertices[j].y, Scene.objects[Scene.obj_count-1-i].vertices[j].z);
         };
         printf("                vertex_count:\n");
-        printf("                    %d\n", Scene.objects[Scene.obj_count-1-i].vertex_count+1);
+        printf("                    %d\n", Scene.objects[Scene.obj_count-1-i].vertex_count);
         printf("                center:\n");
         printf("                    %f, %f, %f\n", Scene.objects[Scene.obj_count-1-i].center[0].x, Scene.objects[Scene.obj_count-1-i].center[0].y, Scene.objects[Scene.obj_count-1-i].center[0].z);
     
-        };
-        return;
+    };
+    return;
 }
 
 
-scene create_obj(scene Scene){
-    char name[30];
-    unsigned int vert_amount;
+scene create_obj(scene Scene, char* Name, unsigned int vert_amount, vert* verts){
     obj new_obj;
-    printf("Hey! I'm new...\n");
-    printf("------------------------------------------------------------ Enter Name of new object------------------------------------------------------------");
-    printf("\n@ ");
-    scanf("%29s", &name);
-    if(strlen(name)>=29){
-        printf("too long name!\nsign-limit:29");
-        Scene = create_obj(Scene);
-        return Scene;
-    };
     for(int i=0;i<Scene.obj_count;i++){
-        if(strcmp(Scene.objects[i].name, name)==0){
+        if(strcmp(Scene.objects[i].name, Name)==0){
             printf("object already exists; please chose a different name\n");
-            Scene = create_obj(Scene);
             return Scene;
         };
     };
-    printf("------------------------------------------------------------ Enter amount of vertices------------------------------------------------------------");
-    printf("\n# ");
-    scanf("%u", &vert_amount);
-    if(vert_amount>25){
-        printf("woa! that's a lot'a vertices!\n\tAre you sure you want to create %u amount of vertices?\n\t(not the amount you entered? report at: example.com)\n>");       //add actual github;
-        char enter_masive_amount[1];
-        scanf("%1s", &enter_masive_amount);
-        if(strcmp("y", enter_masive_amount)==0){
-            if(strcmp("n", enter_masive_amount)){
-            }else{
-                create_obj(Scene);
+    new_obj = __init_object__(new_obj, Name);
+    switch(vert_amount){
+        case 0:
+            break;
+        default:
+            for(int i=0;i<vert_amount;i++){
+                
+                new_obj = append_vert_to_obj_by_vert(verts[i], new_obj);
             };
-        }else{
-            create_obj(Scene);
-        };
-    };
-    new_obj = __init_object__(new_obj, name);
-    for(int i=0;i<vert_amount;i++){
-        float coords[3];
-        printf("------------------------------------------------------------ please enter x coordinate for vertex %d----------------------------------------\n##", i);
-        scanf("%f", &coords[0]);
-        printf("------------------------------------------------------------ please enter y coordinate for vertex %d----------------------------------------\n##", i);
-        scanf("%f", &coords[1]);
-        printf("------------------------------------------------------------ please enter z coordinate for vertex %d----------------------------------------\n##", i);
-        scanf("%f", &coords[2]);
-        new_obj = append_vert_to_obj(coords[0], coords[1], coords[2], new_obj);
+            break;
     };
     new_obj.center = calculate_obj_center(new_obj.vertices, new_obj.vertex_count);
 
@@ -328,8 +336,17 @@ void free_obj_verts(obj Object){
     free(Object.vertices);
     return;
 };
+void free_obj_edges(obj Object){
+    free(Object.edges);
+    return;
+}
+void free_obj_faces(obj Object){
+    return;                         // at time of write: not jet implemented
+}
 void del_obj(obj Object){
     free_obj_verts(Object);
+    free_obj_edges(Object);
+    free_obj_faces(Object);
     free(Object.name);
     free(Object.center);
     free(&Object.vertex_count);
