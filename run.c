@@ -4,14 +4,18 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 
 
 scene create_obj_loc(scene Scene){
     char Name[31];
     unsigned int vert_count;
     vert* verts = (vert*)malloc(sizeof(vert));
-    
+    char bin[31];
+
+
     printf("------------------------------------------------------------ Name of Object ------------------------------------------------------------\n@");
+    fgets(bin, sizeof(Name), stdin);
     if (fgets(Name, sizeof(Name), stdin) != NULL) {
         size_t len = strlen(Name);
         if (len > 0 && Name[len - 1] == '\n') {
@@ -24,7 +28,6 @@ scene create_obj_loc(scene Scene){
     
     printf("------------------------------------------------------------ vert ammount ---------------------------------------------------------------\n#");
     scanf("%d", &vert_count);
-    printf("\n");
     if(vert_count<0){
         fprintf(stderr, "Error interpreting vert amount (negative)");
         exit(1);
@@ -54,6 +57,36 @@ scene create_obj_loc(scene Scene){
     Scene = create_obj(Scene, Name, vert_count, verts);
 
     return Scene;
+}
+
+scene move_object_loc(scene Scene){
+    char Name[31];
+    unsigned int vert_count;
+    vert* verts = (vert*)malloc(sizeof(vert));
+    char bin[31];
+
+
+    printf("------------------------------------------------------------ Name of Object ------------------------------------------------------------\n@");
+    fgets(bin, sizeof(Name), stdin);
+    if (fgets(Name, sizeof(Name), stdin) != NULL) {
+        size_t len = strlen(Name);
+        if (len > 0 && Name[len - 1] == '\n') {
+            Name[len - 1] = '\0'; 
+        };
+    } else {
+        fprintf(stderr, "Error reading input.\n");
+        return Scene; 
+    };
+
+    char** scene_obj_names = (char**)malloc(sizeof(char*)*Scene.obj_count);
+    for(int i=0;i<Scene.obj_count;i++){
+        scene_obj_names = (char*)malloc(sizeof(char)*sizeof(Scene.objects[i].name));
+        strcpy(scene_obj_names, Scene.objects[i].name);
+    };
+    int Index = GetIndex(scene_obj_names, Name, Scene.obj_count);
+
+    
+    
 }
 
 int main(scene prev_Scene){
@@ -142,6 +175,7 @@ int main(scene prev_Scene){
                 printf("printing this menue...\n");
                 printf("...\n");
                 printf("...wait a second...\n");
+                prinf("yea I cannot be fucked doing this right now/I'm too bloody lazy to do said task. maybe I'll let the Transformes decide the fate of this monolog\n");
                 break;
             case 7:
                 printf("bye!\n");
@@ -158,7 +192,9 @@ int main(scene prev_Scene){
                 break;
             case 11:
                 char* search_name = (char*)malloc(sizeof(char)*31);
-                printf("-------------------------------------------------------------- object name ----------------------------------------------------------------\n@");
+                char bin[sizeof(search_name)];
+                printf("------------------------------------------------------------ Name of Object ------------------------------------------------------------\n@");
+                fgets(bin, sizeof(bin), stdin);
                 if (fgets(search_name, sizeof(search_name), stdin) != NULL) {
                     size_t len = strlen(search_name);
                     if (len > 0 && search_name[len - 1] == '\n') {

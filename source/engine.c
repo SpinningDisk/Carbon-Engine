@@ -50,9 +50,8 @@ obj __init_object__(obj object, char Name[31]){
     object.edges = (edge*)malloc(0);
     object.faces = (face*)malloc(0);
     object.name = (char*)malloc(strlen(Name)*sizeof(char));
-    for(int i=0; i<strlen(Name); i++){
-        object.name[i] = Name[i];
-    };
+    strcpy(object.name, Name);
+    
     object.vertex_count = 0;
     object.edge_count = 0;
     object.face_count = 0;
@@ -103,10 +102,6 @@ obj change_vertex(unsigned int index, float new_x, float new_y, float new_z, obj
     object.vertices[index] = new_vert;
     return object;
 }
-obj change_vertex_by_vert(unsigned int index, vert new_vert, obj object){
-    object.vertices[index] = new_vert;
-    return object;
-}
 obj create_edge_by_index(int vert_a_index, int vert_b_index, obj object){
     edge tmp_edge;
     if(object.vertex_count<vert_a_index){
@@ -128,25 +123,24 @@ obj create_edge_by_index(int vert_a_index, int vert_b_index, obj object){
 char* debug_obj(char* Name, scene Scene){
     char* msg = (char*)malloc(sizeof(char)*17+17+17);
     char** Scene_obj_names = (char**)malloc(sizeof(char*)*Scene.obj_count);
-    printf("do:     starting loop\n");
     for(int i=0; i<Scene.obj_count; i++){
         Scene_obj_names[i] = (char*)malloc(sizeof(Scene.objects[i].name));
         Scene_obj_names[i] = Scene.objects[i].name;
-        printf("do:     just added: %s\n", Scene_obj_names[i]);
     }
     
     int Index = GetIndex(Name, Scene_obj_names, Scene.obj_count);
-    printf("do:     index %d\n", Index);
-    /*printf("obj-debuger:    \n");
-    printf("    debuggin: '%s'\n", object.name);
+
+    obj Object = Scene.objects[Index];
+    printf("obj-debuger:    \n");
+    printf("    debuggin: '%s'\n", Object.name);
     printf("        vertices:\n");
-    for (int i=0; i<object.vertex_count; i++){
-        printf("            %f, %f, %f\n", object.vertices[i].x, object.vertices[i].y, object.vertices[i].z);
+    for (int i=0; i<Object.vertex_count; i++){
+        printf("            %f, %f, %f\n", Object.vertices[i].x, Object.vertices[i].y, Object.vertices[i].z);
     };
     printf("        vertex_count:\n");
-    printf("            %d\n", object.vertex_count);
+    printf("            %d\n", Object.vertex_count);
     printf("        center:\n");
-    printf("            %f, %f, %f", object.center[0].x, object.center[0].y, object.center[0].z);*/
+    printf("            %f, %f, %f", Object.center[0].x, Object.center[0].y, Object.center[0].z);
     return msg;
 }
 
@@ -218,7 +212,7 @@ void debug_scn(scene Scene){
     printf("    debugging: '%s'\n", Scene.name);
     printf("        obj-amount: %d\n", Scene.obj_count);
     for(int i=0; i<Scene.obj_count; i++){
-        printf("        obj-debuger:    \n");
+        /*printf("        obj-debuger:    \n");
         printf("            debuggin: '%s'\n", Scene.objects[Scene.obj_count-1-i].name);
         printf("                vertices:\n");
         for (int j=0; j<Scene.objects[Scene.obj_count-1-i].vertex_count; j++){
@@ -228,7 +222,9 @@ void debug_scn(scene Scene){
         printf("                    %d\n", Scene.objects[Scene.obj_count-1-i].vertex_count);
         printf("                center:\n");
         printf("                    %f, %f, %f\n", Scene.objects[Scene.obj_count-1-i].center[0].x, Scene.objects[Scene.obj_count-1-i].center[0].y, Scene.objects[Scene.obj_count-1-i].center[0].z);
-    
+    */
+        char* msg = debug_obj(Scene.objects[i].name,  Scene);
+        printf("%s\n", msg);
     };
     return;
 }
