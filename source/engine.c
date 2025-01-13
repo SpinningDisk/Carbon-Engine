@@ -129,6 +129,13 @@ char* debug_obj(char* Name, scene Scene){
     }
     
     int Index = GetIndex(Name, Scene_obj_names, Scene.obj_count);
+    switch(Index){
+        case -1:
+            fprintf(stderr, "Error finding object\n");
+            return "";
+        default:
+            break;
+    }
 
     obj Object = Scene.objects[Index];
     printf("obj-debuger:    \n");
@@ -212,17 +219,6 @@ void debug_scn(scene Scene){
     printf("    debugging: '%s'\n", Scene.name);
     printf("        obj-amount: %d\n", Scene.obj_count);
     for(int i=0; i<Scene.obj_count; i++){
-        /*printf("        obj-debuger:    \n");
-        printf("            debuggin: '%s'\n", Scene.objects[Scene.obj_count-1-i].name);
-        printf("                vertices:\n");
-        for (int j=0; j<Scene.objects[Scene.obj_count-1-i].vertex_count; j++){
-            printf("                    %f, %f, %f\n", Scene.objects[Scene.obj_count-1-i].vertices[j].x, Scene.objects[Scene.obj_count-1-i].vertices[j].y, Scene.objects[Scene.obj_count-1-i].vertices[j].z);
-        };
-        printf("                vertex_count:\n");
-        printf("                    %d\n", Scene.objects[Scene.obj_count-1-i].vertex_count);
-        printf("                center:\n");
-        printf("                    %f, %f, %f\n", Scene.objects[Scene.obj_count-1-i].center[0].x, Scene.objects[Scene.obj_count-1-i].center[0].y, Scene.objects[Scene.obj_count-1-i].center[0].z);
-    */
         char* msg = debug_obj(Scene.objects[i].name,  Scene);
         printf("%s\n", msg);
     };

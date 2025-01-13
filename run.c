@@ -80,11 +80,10 @@ scene move_object_loc(scene Scene){
 
     char** scene_obj_names = (char**)malloc(sizeof(char*)*Scene.obj_count);
     for(int i=0;i<Scene.obj_count;i++){
-        scene_obj_names = (char*)malloc(sizeof(char)*sizeof(Scene.objects[i].name));
-        strcpy(scene_obj_names, Scene.objects[i].name);
+        scene_obj_names[i] = (char*)malloc(sizeof(char)*sizeof(Scene.objects[i].name));
+        strcpy(scene_obj_names[i], Scene.objects[i].name);
     };
-    int Index = GetIndex(scene_obj_names, Name, Scene.obj_count);
-
+    int Index = GetIndex(Name, scene_obj_names, Scene.obj_count);
     
     
 }
@@ -175,7 +174,7 @@ int main(scene prev_Scene){
                 printf("printing this menue...\n");
                 printf("...\n");
                 printf("...wait a second...\n");
-                prinf("yea I cannot be fucked doing this right now/I'm too bloody lazy to do said task. maybe I'll let the Transformes decide the fate of this monolog\n");
+                printf("yea I cannot be fucked doing this right now/I'm too bloody lazy to do said task. maybe I'll let the Transformes decide the fate of this monolog\n");
                 break;
             case 7:
                 printf("bye!\n");
