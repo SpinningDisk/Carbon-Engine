@@ -63,6 +63,7 @@ scene move_object_loc(scene Scene){
     char Name[31];
     unsigned int vert_count;
     vert* verts = (vert*)malloc(sizeof(vert));
+    char vec_or_pos[4];
     char bin[31];
 
 
@@ -91,11 +92,33 @@ scene move_object_loc(scene Scene){
                 printf("%s, ", scene_obj_names[i]);
             };
             printf(")");
-            return scene;
+            return Scene;
         default:
             break;
     };
+    printf("-------------------------------------------------------------- vec or pos --------------------------------------------------------------\n/"); 
+    if (fgets(vec_or_pos, sizeof(vec_or_pos), stdin) != NULL) {
+        size_t len = strlen(vec_or_pos);
+        if (len > 0 && vec_or_pos[len - 1] == '\n') {
+            vec_or_pos[len - 1] = '\0'; 
+        };
+    } else {
+        fprintf(stderr, "Error reading input.\n");
+        return Scene; 
+    };
 
+    if(strcmp("vec", vec_or_pos)==0){
+        return Scene;
+    }else if(strcmp("pos", vec_or_pos)==0){
+        return Scene;
+    }else{
+        fprintf(stderr, "Error intepreting %s (not vec nor pos)", vec_or_pos);
+        return Scene;
+    };
+
+    for(int i=0; i<Scene.objects[i].vertex_count; i++){
+        break;
+    }
     
     return Scene;
 }
