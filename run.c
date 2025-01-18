@@ -84,22 +84,29 @@ scene move_object_loc(scene Scene){
         strcpy(scene_obj_names[i], Scene.objects[i].name);
     };
     int Index = GetIndex(Name, scene_obj_names, Scene.obj_count);
+    switch(Index){
+        case -1:
+            printf("could not find object '%s' in scene object array: (", Name);
+            for(int i=0; i<Scene.obj_count; i++){
+                printf("%s, ", scene_obj_names[i]);
+            };
+            printf(")");
+            return scene;
+        default:
+            break;
+    };
+
     
-    
+    return Scene;
 }
 
-int main(scene prev_Scene){
-    scene Scene;
-    if(prev_Scene.obj_count!=0){
-        char test_name[30] = "this is a test";
-        Scene = __init_scene__(Scene, test_name);
-    }else{
-        Scene = prev_Scene;
-    };
+int main(){
+    char SceneName[30] = "Scene";
+    scene Scene = __init_scene__(Scene, SceneName);
     while(1){
         char action[16] = "";
         printf(">> ");
-        scanf("%15s", &action);                         
+        scanf("%15s", action);                         
         if(strlen(action)>=15){
             printf("no such action found;\n\tplease try again!\n\tand because this program is stupid, \n\twe have decided to just exit it now!\n");
             break;
@@ -148,6 +155,11 @@ int main(scene prev_Scene){
 
         int action_index = GetIndex(action, ops, ops_num);
         bool close_program = false;
+
+        // Vars that need to be initialized BEFORE switch for some reason (prob bcaus' swtich is a function)
+        char* search_name = (char*)malloc(sizeof(char)*31);
+        char bin[sizeof(search_name)];
+
         switch(action_index){                               //turn this into binary search (perchance through maps, which eliminates need for GetIndex);
             case -1:
                 printf("not a valid option;\n");
@@ -156,7 +168,7 @@ int main(scene prev_Scene){
                 Scene = create_obj_loc(Scene);
                 break;
             case 1:
-                move_object(Scene);
+                move_object_loc(Scene);
                 break;
             case 2:
                 printf("moving vertex...\n");
@@ -190,8 +202,6 @@ int main(scene prev_Scene){
                 printf("writing to 'Scene.ce'\n");
                 break;
             case 11:
-                char* search_name = (char*)malloc(sizeof(char)*31);
-                char bin[sizeof(search_name)];
                 printf("------------------------------------------------------------ Name of Object ------------------------------------------------------------\n@");
                 fgets(bin, sizeof(bin), stdin);
                 if (fgets(search_name, sizeof(search_name), stdin) != NULL) {
@@ -218,6 +228,11 @@ int main(scene prev_Scene){
                 printf("signal 14\n");
                 break;
             case 15:
+                printf("the case with no name");
+                break;
+            default:
+                printf("NJI\n");
+                break;
                 
 
 
@@ -232,13 +247,3 @@ int main(scene prev_Scene){
     };
     return 0;
 }
-
-/*
-int main(){
-    scene Scene = __init_scene__(Scene, "test_scn\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
-    Scene = create_obj_loc(Scene);
-    char* test_name = (char*)malloc(sizeof(char)*5);
-    test_name = "Hans";
-    debug_obj(test_name, Scene);
-    return 0;
-}*/
