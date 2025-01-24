@@ -140,6 +140,8 @@ scene move_object_loc(scene Scene){
     };
 
     if(strcmp("vec", vec_or_pos)==0){
+        float vec[4];
+        
         return Scene;
     }else if(strcmp("pos", vec_or_pos)==0){
         return Scene;
