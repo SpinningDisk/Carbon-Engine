@@ -61,6 +61,7 @@ scene create_obj_loc(scene Scene){
 
 scene move_object_loc(scene Scene){
     char Name[31];
+    char vec_or_pos[4];
     unsigned int vert_count;
     vert* verts = (vert*)malloc(sizeof(vert));
     char vec_or_pos[4];
@@ -94,6 +95,37 @@ scene move_object_loc(scene Scene){
             printf(")");
             return Scene;
         default:
+            printf("------------------------------------------------------------ vec or pos ------------------------------------------------------------\n@");
+            if (fgets(vec_or_pos, sizeof(vec_or_pos), stdin) != NULL) {
+                size_t len = strlen(Name);
+                    if (len > 0 && vec_or_pos[len - 1] == '\n') {
+                        vec_or_pos[len - 1] = '\0'; 
+                    };
+                } else {
+                    fprintf(stderr, "Error reading input.\n");
+                    return Scene; 
+                };
+            if(strcmp("vec", vec_or_pos)==0){                                   // change from scanf to fgets
+                    float vector[3];
+                    printf("------------------------------------------------------------enter x coordinate of vector:------------------------------------------------------------\n##");
+                    scanf("%f", &vector[0]);
+                    printf("------------------------------------------------------------enter y coordinate of vector:------------------------------------------------------------\n##");
+                    scanf("%f", &vector[1]);
+                    printf("------------------------------------------------------------enter z coordinate of vector:------------------------------------------------------------\n##");
+                    scanf("%f", &vector[2]);
+                    Scene.objects[Index] = move_object_vec(Scene.objects[Index], vector);
+            }else if(strcmp("pos", vec_or_pos)==0){
+                float new_pos[3];
+                    printf("------------------------------------------------------------enter x coordinate of position:------------------------------------------------------------\n##");
+                    scanf("%f", &new_pos[0]);
+                    printf("------------------------------------------------------------enter y coordinate of position:------------------------------------------------------------\n##");
+                    scanf("%f", &new_pos[1]);
+                    printf("------------------------------------------------------------enter z coordinate of position:------------------------------------------------------------\n##");
+                    scanf("%f", &new_pos[2]);
+                    Scene.objects[Index] = move_object_vec(Scene.objects[Index], new_pos);
+            }else{
+                printf("mol:        not a valid option\n");
+            }
             break;
     };
     printf("-------------------------------------------------------------- vec or pos --------------------------------------------------------------\n/"); 

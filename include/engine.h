@@ -41,9 +41,8 @@ scene __init_scene__(scene Scene, char name[30]);
 scene append_obj_to_scene_by_object(scene Scene, obj Object);
 void debug_scn(scene Scene);
 scene create_obj(scene Scene, char* Name, unsigned int vert_amount, vert* verts);
-obj move_object_vec(obj Object);
-obj move_object_pos(obj Object);
-scene move_object(scene Scene);
+obj move_object_vec(obj Object, float vec[3]);
+obj move_object_pos(obj Object, float new_center[3]);
 
 
 
