@@ -1,0 +1,22 @@
+###################################
+    create two kinds of files:
+        filetype containing final stage (like .blend)                                                       -> .cep (Carbon Engine Project);
+        A
+        |
+        deprecated: use system.save inside script instead;
+        filetype containing executable being able to log out data at specific action sequence(like .o)      -> .cee (Carbon Engine Executable); -> binary (compiler) and graph exacutable (interpreter)
+
+        graph executable -> since graph consists of numbers, create a function that takes in the graph executable and either decompiles to .ces, or to human readable graph. EG.:
+                      -------------------------------------------------------------
+                      |             ---------------------------------             |
+                      |             |                               |             |
+            Start_b->FOR->Start_l1->OUT->Start_l2->"Hello, World"->END_l2->x+1->END_l1
+                      |
+                 x = 1->x<5
+            
+        the above program loops over x for five iterations, where it prints "Hello, World!" for each iteration;
+
+
+################################            <------short term
+
+fix case 11 (debug object) in run.c; it doesn't take input, and assigns nothing to it instead of listening to stdin

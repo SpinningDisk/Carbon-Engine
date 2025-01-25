@@ -1,0 +1,29 @@
+#system: move_center_auto=False#
+
+create(Hans)
+exit
+
+for i in [0, 7]:
+    for j in [1, 8]:
+        if j%2 == 0:
+            Hans.v[cui_i].x = -0.5
+        else:
+            Hans.v[cui_i].x = 0.5
+        
+        if ((j%4)>0) AND ((j%4)<3):
+            Hans.v[cui_i].y = -0.5
+        else:
+            Hans.v[cui_i].y = 0.5
+        
+        if j<=4:
+            Hans.v[cui_i].z = -0.5
+        else:
+            Hans.v[cui_i].z = 0.5
+
+
+
+
+
+
+
+delete(cube)
