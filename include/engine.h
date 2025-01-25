@@ -29,7 +29,7 @@ typedef struct{
     char *name;
 }scene;
 
-obj __init_object__(obj object, char Name[31]);
+obj __init_object__(obj object, char* Name);
 vert* calculate_obj_center(vert* vertices, int vert_amount);
 obj append_vert_to_obj(float x, float y, float z, obj object);
 obj append_vert_to_obj_by_vert(vert new_vert, obj object);

@@ -45,7 +45,7 @@ typedef struct{
 }scene;
 
 
-obj __init_object__(obj object, char Name[31]){
+obj __init_object__(obj object, char* Name){
     object.vertices = (vert*)malloc(0);
     object.edges = (edge*)malloc(0);
     object.faces = (face*)malloc(0);

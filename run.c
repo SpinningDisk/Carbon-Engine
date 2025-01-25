@@ -64,7 +64,6 @@ scene move_object_loc(scene Scene){
     char vec_or_pos[4];
     unsigned int vert_count;
     vert* verts = (vert*)malloc(sizeof(vert));
-    char vec_or_pos[4];
     char bin[31];
 
 
@@ -122,37 +121,13 @@ scene move_object_loc(scene Scene){
                     scanf("%f", &new_pos[1]);
                     printf("------------------------------------------------------------enter z coordinate of position:------------------------------------------------------------\n##");
                     scanf("%f", &new_pos[2]);
-                    Scene.objects[Index] = move_object_vec(Scene.objects[Index], new_pos);
+                    Scene.objects[Index] = move_object_pos(Scene.objects[Index], new_pos);
             }else{
                 printf("mol:        not a valid option\n");
             }
             break;
     };
-    printf("-------------------------------------------------------------- vec or pos --------------------------------------------------------------\n/"); 
-    if (fgets(vec_or_pos, sizeof(vec_or_pos), stdin) != NULL) {
-        size_t len = strlen(vec_or_pos);
-        if (len > 0 && vec_or_pos[len - 1] == '\n') {
-            vec_or_pos[len - 1] = '\0'; 
-        };
-    } else {
-        fprintf(stderr, "Error reading input.\n");
-        return Scene; 
-    };
 
-    if(strcmp("vec", vec_or_pos)==0){
-        float vec[4];
-        
-        return Scene;
-    }else if(strcmp("pos", vec_or_pos)==0){
-        return Scene;
-    }else{
-        fprintf(stderr, "Error intepreting %s (not vec nor pos)", vec_or_pos);
-        return Scene;
-    };
-
-    for(int i=0; i<Scene.objects[i].vertex_count; i++){
-        break;
-    }
     
     return Scene;
 }
