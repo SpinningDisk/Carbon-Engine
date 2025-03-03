@@ -1,14 +1,15 @@
-#include "include/engine.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdbool.h>
 #include <limits.h>
+#include "./include/engine.h"
 
 
 scene create_obj_loc(scene Scene){
     char Name[31];
+    char Type[31];
     unsigned int vert_count;
     vert* verts = (vert*)malloc(sizeof(vert));
     char bin[31];
@@ -25,6 +26,27 @@ scene create_obj_loc(scene Scene){
         fprintf(stderr, "Error reading input.\n");
         return Scene; 
     };
+
+    printf("------------------------------------------------------------ Type of Object ------------------------------------------------------------\n@");
+    fgets(bin, sizeof(Type), stdin);
+    if (fgets(Type, sizeof(Type), stdin) != NULL) {
+        size_t len = strlen(Type);
+        if (len > 0 && Name[len - 1] == '\n') {
+            Type[len - 1] = '\0'; 
+        };
+    } else {
+        fprintf(stderr, "Error reading input.\n");
+        return Scene; 
+    };
+    int Type_index = GetIndex(Type, object_types_arr(), object_types);
+    switch(Type_index){
+        case -1:
+            fprintf(stderr, "Error interpreting object type; setting to default of solid");
+            Type_index = 0;
+            break;
+        default:
+            break;
+    }
     
     printf("------------------------------------------------------------ vert ammount ---------------------------------------------------------------\n#");
     scanf("%d", &vert_count);
@@ -51,7 +73,7 @@ scene create_obj_loc(scene Scene){
                 verts[i] = new_vert;
             }
     }
-    obj new_obj = __init_object__(new_obj, Name);
+    obj new_obj = __init_object__(new_obj, Name, Type_index);
     new_obj.vertices = verts;
     
     Scene = create_obj(Scene, Name, vert_count, verts);
@@ -138,13 +160,13 @@ int main(){
     while(1){
         char action[16] = "";
         printf(">> ");
-        scanf("%15s", action);                         
+        scanf("%15s", action);                  
         if(strlen(action)>=15){
             printf("no such action found;\n\tplease try again!\n\tand because this program is stupid, \n\twe have decided to just exit it now!\n");
             break;
         };
 
-        int ops_num = 18;
+        int ops_num = 19;
         char** ops = (char**)malloc(sizeof(char*)*ops_num);
         ops[0] = (char*)malloc(sizeof(char)*5);
         ops[0] = "create";
@@ -184,6 +206,8 @@ int main(){
         ops[17] = "create_face";
         ops[18] = (char*)malloc(sizeof(char)*7);
         ops[18] = "cf";
+        ops[19] = (char*)malloc(sizeof(char)*13);
+        ops[19] = "place_camera";
 
         int action_index = GetIndex(action, ops, ops_num);
         bool close_program = false;

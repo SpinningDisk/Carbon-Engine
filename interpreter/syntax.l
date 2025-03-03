@@ -6,7 +6,9 @@ scene Scene;
 %}
 
 %%
-create\([a-zA-Z0-9]+\)  {char* name = (char*)malloc(1);
+create\([a-zA-Z0-9]+\)  {
+    #include "../include/engine.h"
+    char* name = (char*)malloc(1);
         if(strlen(yytext)>sstrlen+8){
             fprintf(stderr, "Name too long;");
             free(name);
@@ -17,10 +19,12 @@ create\([a-zA-Z0-9]+\)  {char* name = (char*)malloc(1);
             name[i-7] = yytext[i];
         }
         printf("create: received %s\n", name);
-        obj tmp = __init_object__(tmp, name);
+        obj tmp = __init_object__(tmp, name, 0);
         Scene = append_obj_to_scene_by_object(Scene, tmp);
         }
-info\(object,[a-zA-Z0-9]+\)  {char* name = (char*)malloc(1);
+info\(object,[[:space:]]?[a-zA-Z0-9]+\)  {
+    #include "../include/engine.h"
+    char* name = (char*)malloc(1);
         if(strlen(yytext)>sstrlen+15){
             fprintf(stderr, "Name too long;");
             free(name);

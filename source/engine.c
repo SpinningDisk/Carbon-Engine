@@ -1,3 +1,4 @@
+#include "../include/basefunctions.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <malloc.h>
@@ -6,18 +7,21 @@
 #include <unistd.h>
 #include <math.h>
 
-int GetIndex(char* elm, char** array, int arr_size){
-    for(int i=0;i<arr_size;i++){
-        switch(strcmp(array[i], elm)){
-            case 0:
-                return i;
-            default:
-                break;
-        };
-    };
-    return -1;
-};
+int main(){
+    printf("%f\n", log10(5));
+    return 0;
+}
 
+
+unsigned int object_type_count = 2;
+char** object_types_arr(){
+    char** object_types = (char**)malloc(sizeof(char*)*object_type_count+1);
+    object_types[0] = (char*)malloc(sizeof(char)*5);
+    object_types[0] = "solid";
+    object_types[1] = (char*)malloc(sizeof(char)*6);
+    object_types[1] = "camera";
+    return object_types;
+}
 typedef struct vert{
     float x,y,z;
 }vert;
@@ -35,6 +39,7 @@ typedef struct{
     unsigned int face_count;
     face *faces;
 
+    unsigned int type;
     char *name;
     vert *center;
 }obj;
@@ -45,11 +50,12 @@ typedef struct{
 }scene;
 
 
-obj __init_object__(obj object, char* Name){
+obj __init_object__(obj object, char* Name, unsigned int type){
     object.vertices = (vert*)malloc(0);
     object.edges = (edge*)malloc(0);
     object.faces = (face*)malloc(0);
     object.name = (char*)malloc(strlen(Name)*sizeof(char));
+    object.type = type;
     strcpy(object.name, Name);
     
     object.vertex_count = 0;
@@ -121,7 +127,7 @@ obj create_edge_by_index(int vert_a_index, int vert_b_index, obj object){
     return object;
 }
 char* debug_obj(char* Name, scene Scene){
-    char* msg = (char*)malloc(sizeof(char)*17+17+17);
+    // check if object of given name exits
     char** Scene_obj_names = (char**)malloc(sizeof(char*)*Scene.obj_count);
     for(int i=0; i<Scene.obj_count; i++){
         Scene_obj_names[i] = (char*)malloc(sizeof(Scene.objects[i].name));
@@ -138,6 +144,11 @@ char* debug_obj(char* Name, scene Scene){
     }
 
     obj Object = Scene.objects[Index];
+    // the lenght of the message will change, so we use malloc to resize that;
+    // we first calculate the length of all the variables, and then add them to the static part of the message
+    int len_verts_and_center = 8*3*(Object.vertex_count+1);
+    int len_vert_count = floor(log10(Object.vertex_count)+1);
+    char* msg = (char*)malloc(17+17+18+(Object.vertex_count*17)+22+13+16+16+strlen(Object.name)+len_verts_and_center+len_vert_count+1);
     printf("obj-debuger:    \n");
     printf("    debuggin: '%s'\n", Object.name);
     printf("        vertices:\n");
@@ -160,7 +171,7 @@ scene __init_scene__(scene Scene, char name[30]){
     };
     obj base_cube;
     char base_cube_name[30] = "cube";
-    base_cube = __init_object__(base_cube, base_cube_name);
+    base_cube = __init_object__(base_cube, base_cube_name, 0);
     vert vert1;
     vert1.x = -0.5f;
     vert1.y = -0.5f;
@@ -226,7 +237,7 @@ void debug_scn(scene Scene){
 }
 
 
-scene create_obj(scene Scene, char* Name, unsigned int vert_amount, vert* verts){
+scene create_obj(scene Scene, char* Name, unsigned int vert_amount, vert* verts, char* type){
     obj new_obj;
     for(int i=0;i<Scene.obj_count;i++){
         if(strcmp(Scene.objects[i].name, Name)==0){
@@ -234,7 +245,8 @@ scene create_obj(scene Scene, char* Name, unsigned int vert_amount, vert* verts)
             return Scene;
         };
     };
-    new_obj = __init_object__(new_obj, Name);
+    int object_type = GetIndex(type, object_types_arr(), object_type_count);
+    new_obj = __init_object__(new_obj, Name, 0);                                                    // set object.type based on input type here
     switch(vert_amount){
         case 0:
             break;

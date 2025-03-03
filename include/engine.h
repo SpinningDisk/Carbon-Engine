@@ -2,6 +2,8 @@
 #define ENGINE_H
 
 int GetIndex(char* elm, char** array, int arr_size);
+unsigned int object_types;
+char** object_types_arr();
 
 typedef struct vert{
     float x,y,z;
@@ -29,7 +31,7 @@ typedef struct{
     char *name;
 }scene;
 
-obj __init_object__(obj object, char* Name);
+obj __init_object__(obj object, char* Name, unsigned int type);
 vert* calculate_obj_center(vert* vertices, int vert_amount);
 obj append_vert_to_obj(float x, float y, float z, obj object);
 obj append_vert_to_obj_by_vert(vert new_vert, obj object);
