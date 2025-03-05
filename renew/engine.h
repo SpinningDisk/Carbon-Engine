@@ -47,5 +47,11 @@ obj move_object_vec(obj Object, float vec[3]);
 obj move_object_pos(obj Object, float new_center[3]);
 
 
+void free_obj_verts(obj Object);
+void free_obj_edges(obj Object);
+void free_obj_faces(obj Object);
+void del_obj(obj Object);
+void del_scn(scene Scene);
+
 
 #endif

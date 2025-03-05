@@ -43,6 +43,8 @@ info\(object,[[:space:]]?[a-zA-Z0-9]+\)  {
 .
 \n  {printf(">>");}
 exit    {printf("           bye!\n");
+        debug_scn(Scene);
+        del_scn(Scene);
         return 0;}
 %%
 
@@ -51,6 +53,5 @@ int main(){
 Scene = __init_scene__(Scene, s_name);
 printf(">>");
 yylex();
-
 return 0;
 }

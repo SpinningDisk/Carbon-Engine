@@ -1,0 +1,4 @@
+PATH:
+    Makefile
+    source/engine   source/functions.c
+    CES/exampes     CES/lex.l
