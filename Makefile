@@ -13,11 +13,15 @@ LanguageOut = build/CES/CarbonEngineInterpreter.o
 
 static:
 	mkdir $(OutLoc)lib
+	mkdir $(OutLoc)include
 	$(CC) -c -fPIC $(LibLoc)$(LibFunctionsSrc) -o $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o) -Wall -Wextra
 	ar rcs $(OutLoc)lib/lib$(LibFunctionsSrc:.c=.a) $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o)
 
 	$(CC) -c -fPIC $(LibLoc)$(LibEngineSrc) -o $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -Wall -Wextra
 	ar rcs $(OutLoc)lib/lib$(LibEngineSrc:.c=.a) $(OutLoc)tmp/$(LibEngineSrc:.c=.o)
+
+	cp include/engine.h $(OutLoc)include/
+	cp include/functions.h $(OutLoc)include/
 
 shared:
 	mkdir $(OutLoc)include
