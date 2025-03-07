@@ -22,7 +22,9 @@ typedef struct{
     unsigned int type;
     int id;
     vertex* vertices;
-    float center[4];
+    edge* edges;
+    face* faces;
+    vertex center;
     unsigned int  vertexCount;
 }object;
 typedef struct{
@@ -37,8 +39,9 @@ typedef struct{
     scene* scenes;
 }project;
 
-
+int retOne();
 // clean functions
 
-void clearObject(object* Object);
+void clearObjects(object* Objects);
+void clearScenes(scene* Scenes);
 #endif
