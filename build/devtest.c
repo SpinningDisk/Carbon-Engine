@@ -4,15 +4,19 @@
 #include <stdio.h>
 
 int main(){
-	project P = __init_project__();
-	char* Name = (char*)malloc(sizeof(char)*6);
-	Name = "hello";
-	scene Main = __init_scene__(P, Name);
-	char* O_Name = (char*)malloc(sizeof(char)*5);
-	O_Name = "world";
-	object OTest = __init_object__(Main, 0, Name);
-
-
+	project Hans = __init_project__();
+	char* S_Name = (char*)malloc(sizeof(char)*5);
+	S_Name = "hello";
+	scene Scene = __init_scene__(Hans, S_Name);
+	/*
+	printf("scene after: \n");
+	printf("name: %s\n", Main.name);
+	for(unsigned int i=0; i<=Main.objectCount; i++){
+		printf("	name: %s\n", Main.objects[i].name);
+		for(unsigned int j=0; j<=Main.objects[i].vertexCount; i++){
+			printf("		vertex %d: %f, %f, %f\n", j, Main.objects[i].vertices[j].x, Main.objects[i].vertices[j].y, Main.objects[i].vertices[j].z);
+		}
+	}*/
 
 	return 0;
 }

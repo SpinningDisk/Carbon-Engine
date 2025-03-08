@@ -3,6 +3,7 @@
 #include "functions.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 /* 
 Objects shall have a Name, and ID (for reference in Scenes), a type (e.g: solid, camera, light, beziér curve, etc.); 
 a list of vertices (or just one, in case of cam, light, ...), a center (for repositioning), and a something I forgot
@@ -71,8 +72,10 @@ object __init_object__(scene Scene, unsigned int Type, char* Name){
 }
 
 scene __init_scene__(project Project, char* Name){
+    printf("hello from engine! %s\n", Name);
     scene Scene;
     Scene.name = Name;
+    printf("hello from engine! %s\n", Scene.name);
     Scene.id = Project.sceneCount+1;
     Scene.objectCount = 0;
     Scene.objectNames = (char**)malloc(0);
@@ -81,31 +84,37 @@ scene __init_scene__(project Project, char* Name){
 }
 
 project __init_project__(){
-    printf("a");
+    printf("Hello from engine! 1\n");
     project Project;
-    printf("b");
-    Project.sceneNames = (char**)malloc(0);
-    printf("c");
-    Project.scenes = (scene*)malloc(0);
-    printf("d");
+    printf("Hello from engine! 2\n");
+    Project.sceneNames = (char**)malloc(sizeof(char*));
+    Project.sceneNames[0] = (char*)malloc(1);
+    printf("Hello from engine! 3\n");
+    Project.scenes = (scene*)malloc(1);
+    printf("Hello from engine! 4\n");
     Project.sceneCount = 0;
-    printf("e");
+    printf("Hello from engine! 5\n");
     return Project;
-    printf("f");
 }
 
 // append functions
 object appendVerticesToObject(object Object, vertex* Vertices, unsigned int Vertex_Amount){
     unsigned int Old_Vertex_Amount = Object.vertexCount;
     Object.vertexCount = Object.vertexCount+Vertex_Amount;
-    Object.vertices = realloc(Object.vertices, sizeof(vertex)*(Object.vertexCount+Vertex_Amount));
+    Object.vertices = realloc(Object.vertices, sizeof(vertex)*Object.vertexCount);
     for(unsigned int i=Old_Vertex_Amount; i<Object.vertexCount; i++){
         Object.vertices[i] = Vertices[i-Old_Vertex_Amount];
     }
     return Object;
 }
-scene appendObjectsToScene(scene Scene, object* Objects){
+scene appendObjectsToScene(scene Scene, object* Objects, unsigned int Object_Amount){
     // can't be fucked doing this rn
+    unsigned int Old_Object_Amount = Scene.objectCount;
+    Scene.objectCount = Scene.objectCount+Object_Amount;
+    Scene.objects = realloc(Scene.objects, sizeof(object)*Scene.objectCount);
+    for(unsigned int i=Old_Object_Amount; i<Scene.objectCount; i++){
+        Scene.objects[i] = Objects[i-Old_Object_Amount];
+    }
     return Scene;
 }
 // standart shapes
