@@ -5,11 +5,11 @@ LanguageLoc = CES/
 OutLoc = build/
 LibFunctionsSrc = functions.c 
 LibEngineSrc = engine.c
-LanguageSrc = CarbonEngineScript.l
+LanguageSrc = CEI.l
 
 LanguageOut = build/CES/CarbonEngineInterpreter.o
 
-.PHONY: static shared CES app dev clean
+.PHONY: static shared CEI app dev clean
 
 # clang -o main.o -Wl,--whole-archive -I./include -L./lib -lengine -Wl,--no-whole-archive test.c -Wl,-rpath=./lib -Wall
 static:
@@ -38,7 +38,7 @@ shared:
 
 
 
-CES:
+CEI:
 	cp include/engine.h $(OutLoc)include/
 	cp include/functions.h $(OutLoc)include/
 
@@ -67,9 +67,7 @@ dev:
 	ar rcs $(OutLoc)lib/lib$(LibEngineSrc:.c=.a) $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 
 	clang -o $(OutLoc)main.o -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive $(OutLoc)devtest.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
-	clear
 	$(OutLoc)main.o
 clean:
 	rm -rf $(OutLoc)lib $(OutLoc)include $(OutLoc)tmp
 	mkdir -p $(OutLoc)tmp $(OutLoc)lib $(OutLoc)include
-	rm $(OutLoc)main.o

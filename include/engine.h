@@ -30,7 +30,7 @@ typedef struct{
 typedef struct{
     char* name;
     unsigned int id;
-    unsigned int objectCout;
+    unsigned int objectCount;
     char** objectNames;
     object* objects;
 }scene;
@@ -39,9 +39,13 @@ typedef struct{
     scene* scenes;
 }project;
 
-int retOne();
-// clean functions
+// init functions
+object __init_object__(scene Scene, unsigned int Type, char* Name);
+scene __init_scene__(project Project, char* Name);
+project __init_project__();
 
-void clearObjects(object* Objects);
-void clearScenes(scene* Scenes);
+// clean functions
+object* clearObjects(object* Objects);
+scene* clearScenes(scene* Scenes);
+project* clearProjects(project* Projects);
 #endif
