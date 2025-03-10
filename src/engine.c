@@ -56,9 +56,9 @@ object __init_object__(scene Scene, unsigned int Type, char* Name){
     Object.name = Name;
     Object.id = Scene.objectCount+1;
     Object.type = Type;
-    Object.vertices = (vertex*)malloc(0);
-    Object.edges = (edge*)malloc(0);
-    Object.faces = (face*)malloc(0);
+    Object.vertices = (vertex*)malloc(1);
+    Object.edges = (edge*)malloc(1);
+    Object.faces = (face*)malloc(1);
     vertex Tmp_Center;
     Tmp_Center.x = 0;
     Tmp_Center.y = 0;
@@ -101,7 +101,6 @@ object appendVerticesToObject(object Object, vertex* Vertices, unsigned int Vert
     return Object;
 }
 scene appendObjectsToScene(scene Scene, object* Objects, unsigned int Object_Amount){
-    // can't be fucked doing this rn
     unsigned int Old_Object_Amount = Scene.objectCount;
     Scene.objectCount = Scene.objectCount+Object_Amount;
     Scene.objects = realloc(Scene.objects, sizeof(object)*Scene.objectCount);
@@ -109,6 +108,15 @@ scene appendObjectsToScene(scene Scene, object* Objects, unsigned int Object_Amo
         Scene.objects[i] = Objects[i-Old_Object_Amount];
     }
     return Scene;
+}
+project appendScenesToProject(project Project, scene* Scenes, unsigned int Scene_Amount){
+    unsigned int Old_Scene_Amount = Project.sceneCount;
+    Project.sceneCount = Project.sceneCount+Scene_Amount;
+    Project.scenes = realloc(Project.scenes, sizeof(scene)*Project.sceneCount);
+    for(unsigned int i=Old_Scene_Amount; i<Project.sceneCount; i++){
+        Project.scenes[i] = Scenes[i-Old_Scene_Amount];
+    }
+    return Project;
 }
 // standart shapes
 
