@@ -80,18 +80,11 @@ scene __init_scene__(project Project, char* Name){
     return Scene;
 }
 
-project __init_project__(){
-    printf("a");
-    project Project;
-    printf("b");
-    Project.sceneNames = (char**)malloc(0);
-    printf("c");
-    Project.scenes = (scene*)malloc(0);
-    printf("d");
+project __init_project__(project Project){
+    Project.sceneNames = (char**)malloc(sizeof(char*));
+    Project.scenes = (scene*)malloc(sizeof(scene));
     Project.sceneCount = 0;
-    printf("e");
     return Project;
-    printf("f");
 }
 
 // append functions

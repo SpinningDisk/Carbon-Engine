@@ -4,15 +4,9 @@
 #include <stdio.h>
 
 int main(){
-	project P = __init_project__();
-	char* Name = (char*)malloc(sizeof(char)*6);
-	Name = "hello";
-	scene Main = __init_scene__(P, Name);
-	char* O_Name = (char*)malloc(sizeof(char)*5);
-	O_Name = "world";
-	object OTest = __init_object__(Main, 0, Name);
-
-
-
+	project Project = __init_project__();
+	char* SName = "Hello, ";
+	char* OName = "world!";
+	scene Main = __init_scene__(Project, SName);
 	return 0;
 }

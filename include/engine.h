@@ -37,6 +37,7 @@ typedef struct{
 typedef struct{
     char** sceneNames;
     scene* scenes;
+    unsigned int sceneCount
 }project;
 
 // init functions
