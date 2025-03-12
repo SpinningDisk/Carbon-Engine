@@ -72,10 +72,8 @@ object __init_object__(scene Scene, unsigned int Type, char* Name){
 }
 
 scene __init_scene__(project Project, char* Name){
-    printf("hello from engine! %s\n", Name);
     scene Scene;
     Scene.name = Name;
-    printf("hello from engine! %s\n", Scene.name);
     Scene.id = Project.sceneCount+1;
     Scene.objectCount = 0;
     Scene.objectNames = (char**)malloc(0);
@@ -100,13 +98,15 @@ object appendVerticesToObject(object Object, vertex* Vertices, unsigned int Vert
     }
     return Object;
 }
-scene appendObjectsToScene(scene Scene, object* Objects, unsigned int Object_Amount){
-    unsigned int Old_Object_Amount = Scene.objectCount;
-    Scene.objectCount = Scene.objectCount+Object_Amount;
-    Scene.objects = realloc(Scene.objects, sizeof(object)*Scene.objectCount);
-    for(unsigned int i=Old_Object_Amount; i<Scene.objectCount; i++){
-        Scene.objects[i] = Objects[i-Old_Object_Amount];
+scene appendObjectToScene(scene Scene, object Object){
+    Scene.objects = (object*)realloc(Scene.objects, sizeof(object)*(Scene.objectCount+2));
+    printf("setting new object \"%s\" at array position %d\n", Object.name, Scene.objectCount);
+    Scene.objects[Scene.objectCount] = Object;
+    Scene.objectCount++;
+    for(int i=0; i<Scene.objectCount; i++){
+        printf("\tobject \"%s\" with ID %d at %d\n", Scene.objects[i].name, Scene.objects[i].id, i);
     }
+    printf("\tname right before: %s\n", Scene.objects[Scene.objectCount-1].name);
     return Scene;
 }
 project appendScenesToProject(project Project, scene* Scenes, unsigned int Scene_Amount){
