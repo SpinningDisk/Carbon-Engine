@@ -102,6 +102,14 @@ scene appendObjectToScene(scene Scene, object Object){
 	Scene.objects[Scene.objectCount] = Object;
     printf("    internally stored as %s\n", Scene.objects[Scene.objectCount].name);
 	Scene.objectCount++;
+    Scene.objects = (object*)realloc(Scene.objects, sizeof(object)*(Scene.objectCount+2));
+    printf("setting new object \"%s\" at array position %d\n", Object.name, Scene.objectCount);
+    Scene.objects[Scene.objectCount] = Object;
+    Scene.objectCount++;
+    for(unsigned int i=0; i<Scene.objectCount; i++){
+        printf("\tobject \"%s\" with ID %d at %d\n", Scene.objects[i].name, Scene.objects[i].id, i);
+    }
+    printf("\tname right before: %s\n", Scene.objects[Scene.objectCount-1].name);
     return Scene;
 }
 // standart shapes
