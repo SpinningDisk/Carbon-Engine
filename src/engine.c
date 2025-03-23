@@ -71,10 +71,10 @@ object __init_object__(scene Scene, unsigned int Type, char* Name){
     return Object;
 }
 
-scene __init_scene__(project Project, char* Name){
+scene __init_scene__(char* Name){
     scene Scene;
     Scene.name = Name;
-    Scene.id = Project.sceneCount+1;
+    Scene.id = 1;                                           //change
     Scene.objectCount = 0;
     Scene.objectNames = (char**)malloc(0);
     Scene.objects = (object*)malloc(0);
@@ -89,34 +89,20 @@ project __init_project__(project Project){
 }
 
 // append functions
-object appendVerticesToObject(object Object, vertex* Vertices, unsigned int Vertex_Amount){
-    unsigned int Old_Vertex_Amount = Object.vertexCount;
-    Object.vertexCount = Object.vertexCount+Vertex_Amount;
-    Object.vertices = realloc(Object.vertices, sizeof(vertex)*Object.vertexCount);
-    for(unsigned int i=Old_Vertex_Amount; i<Object.vertexCount; i++){
-        Object.vertices[i] = Vertices[i-Old_Vertex_Amount];
-    }
+object appendVertexToObject(object Object, vertex Vertex){
     return Object;
 }
+
 scene appendObjectToScene(scene Scene, object Object){
-    Scene.objects = (object*)realloc(Scene.objects, sizeof(object)*(Scene.objectCount+2));
-    printf("setting new object \"%s\" at array position %d\n", Object.name, Scene.objectCount);
-    Scene.objects[Scene.objectCount] = Object;
-    Scene.objectCount++;
-    for(int i=0; i<Scene.objectCount; i++){
-        printf("\tobject \"%s\" with ID %d at %d\n", Scene.objects[i].name, Scene.objects[i].id, i);
-    }
-    printf("\tname right before: %s\n", Scene.objects[Scene.objectCount-1].name);
+    /*Main.objects = (object*)realloc(Main.objects, sizeof(object)*(Main.objectCount+1));
+	Main.objects[Main.objectCount] = O1;
+	Main.objectCount++;*/
+    printf("    object to append: %s\n", Object.name);
+    Scene.objects = (object*)realloc(Scene.objects, sizeof(object)*(Scene.objectCount+1));
+	Scene.objects[Scene.objectCount] = Object;
+    printf("    internally stored as %s\n", Scene.objects[Scene.objectCount].name);
+	Scene.objectCount++;
     return Scene;
-}
-project appendScenesToProject(project Project, scene* Scenes, unsigned int Scene_Amount){
-    unsigned int Old_Scene_Amount = Project.sceneCount;
-    Project.sceneCount = Project.sceneCount+Scene_Amount;
-    Project.scenes = realloc(Project.scenes, sizeof(scene)*Project.sceneCount);
-    for(unsigned int i=Old_Scene_Amount; i<Project.sceneCount; i++){
-        Project.scenes[i] = Scenes[i-Old_Scene_Amount];
-    }
-    return Project;
 }
 // standart shapes
 

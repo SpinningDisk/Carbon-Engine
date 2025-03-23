@@ -42,13 +42,10 @@ typedef struct{
 
 
 // append functiobs
-object appendVerticesToObject(object Object, vertex* Vertices, unsigned int Vertex_Amount);
 scene appendObjectToScene(scene Scene, object Object);
-project appendScenesToProject(project Project, scene* Scenes, unsigned int Scene_Amount);
-
 // init functions
 object __init_object__(scene Scene, unsigned int Type, char* Name);
-scene __init_scene__(project Project, char* Name);
+scene __init_scene__(/*project Project,*/ char* Name);
 project __init_project__();
 
 // clean functions

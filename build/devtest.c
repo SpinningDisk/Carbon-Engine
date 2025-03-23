@@ -2,25 +2,30 @@
 #include "include/engine.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int main(){
-	project Hans = __init_project__();
-	char* S1_Name = "hello,";
-	char* S2_Name = "Hello,";
-	char* O1_Name = "world!";
-	char* O2_Name = "World!";
-	char* O3_Name = " world!";
-	char* O4_Name = " World!";
-	scene Main = __init_scene__(Hans, S1_Name);
-	scene Main1 = __init_scene__(Hans, S2_Name);
+	char* SName = "MainS";
+	char* OName1 = "TestO1";
+	char* OName2 = "TestO2";
+	char* OName3 = "TestO3";
+	char* OName4 = "TestO4";
+	scene Main = __init_scene__(SName);
+	object O1 = __init_object__(Main, 1, OName1);
+	Main = appendObjectToScene(Main, O1);
+	object O2 = __init_object__(Main, 1, OName2);
+	Main = appendObjectToScene(Main, O2);
+	object O3 = __init_object__(Main, 1, OName3);
+	Main = appendObjectToScene(Main, O3);
+	object O4 = __init_object__(Main, 1, OName4);
+	Main = appendObjectToScene(Main, O4);
+	
+	for(unsigned int i=0; i<Main.objectCount; i++){
+		printf("object %d", i);
+		printf(" named: %s", Main.objects[i].name);
+		printf(" of length %d\n", strlen(Main.objects[i].name));
+	}
 
-	object O_Test1 = __init_object__(Main, 0, O1_Name);
-	Main = appendObjectToScene(Main, O_Test1);
-	printf("Scene db at line 19:	name1: 	%s; 	name2: //\n", Main.objects[0].name);
-	object O_Test2 = __init_object__(Main, 0, O2_Name);
-	Main = appendObjectToScene(Main, O_Test2);
-	printf("Scene db at line 22:	name1: 	%s at position %d;\tname2: %s at position %d as %s at qued position %d\n", Main.objects[0].name, Main.objects[0].id, Main.objects[1].name, Main.objects[1].id, O_Test2.name, O_Test2.id);
-	return 0;
 	/*Hans = appendScenesToProject(Hans, &Main, 1);
 	object O_Test3 = __init_object__(Main1, 0, O3_Name);	
 	Main1 = appendObjectsToScene(Main1, &O_Test3, 1);
