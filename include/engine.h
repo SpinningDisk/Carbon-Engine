@@ -1,55 +1,26 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-
-typedef struct{
-    float x;
-    float y;
-    float z;
-    unsigned int id;
-}vertex;
-typedef struct{
-    vertex start;
-    vertex end;
-    unsigned int id;
-}edge;
-typedef struct{
-    edge* edges;
-    unsigned int id;
-}face;
+typedef float vertex[4];
 typedef struct{
     char* name;
-    unsigned int type;
-    int id;
-    vertex* vertices;
-    edge* edges;
-    face* faces;
+    int type;
     vertex center;
-    unsigned int  vertexCount;
+    union{
+        struct{
+            vertex* vertices;
+            unsigned int vertexAmount;
+        };
+    };
+    int* id;
 }object;
 typedef struct{
     char* name;
-    unsigned int id;
-    unsigned int objectCount;
-    char** objectNames;
     object* objects;
+    unsigned int objectAmount;
+    // some settings
 }scene;
-typedef struct{
-    char** sceneNames;
-    scene* scenes;
-    unsigned int sceneCount;
-}project;
 
+object __init_object__(char* Name, int Type);
 
-// append functiobs
-scene appendObjectToScene(scene Scene, object Object);
-// init functions
-object __init_object__(scene Scene, unsigned int Type, char* Name);
-scene __init_scene__(/*project Project,*/ char* Name);
-project __init_project__();
-
-// clean functions
-object* clearObjects(object* Objects);
-scene* clearScenes(scene* Scenes);
-project* clearProjects(project* Projects);
 #endif
