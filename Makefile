@@ -69,5 +69,5 @@ dev:
 	clang -o $(OutLoc)main.o -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive $(OutLoc)devtest.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
 	$(OutLoc)main.o
 clean:
-	rm -rf $(OutLoc)lib $(OutLoc)include $(OutLoc)tmp
+	rm -rf $(OutLoc)lib $(OutLoc)include $(OutLoc)tmp $(OutLoc)CarbonEngineInterpreter
 	mkdir -p $(OutLoc)tmp $(OutLoc)lib $(OutLoc)include
