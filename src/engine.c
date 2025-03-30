@@ -33,6 +33,7 @@ typedef struct{
     char* name;
     object* objects;
     int objectAmount;
+    char** objectNames;
     int id;
     // some settings
 }scene;
@@ -58,6 +59,8 @@ scene __init_scene__(char* Name){
     Scene.name = Name;
     Scene.objects = (object*)malloc(0);
     Scene.objectAmount = 0;
+    Scene.objectNames = (char**)malloc(sizeof(char*));
+    Scene.objectNames[0] = (char*)malloc(sizeof(char));
     Scene.id = -1;
     return Scene;
 }
@@ -77,6 +80,8 @@ scene appendObjectToScene(object Object, scene Scene){
     Object.id = Scene.objectAmount;
     Scene.objects = realloc(Scene.objects, sizeof(object)*(Scene.objectAmount+1));
     Scene.objects[Scene.objectAmount] = Object;
+    Scene.objectNames = (char**)realloc(Scene.objectNames, sizeof(char*)*(Scene.objectAmount+1));
+    //Scene.objectNames[Scene.objectAmount] = Object.name;
     Scene.objectAmount++;
     return Scene;
 }
