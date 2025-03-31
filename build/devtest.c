@@ -2,6 +2,7 @@
 #include "include/engine.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /*scene appendObjectToScene(scene Scene, object Object){
     Scene.objects = (object*)realloc(Scene.objects, sizeof(object)*(Scene.objectCount+2));
@@ -18,6 +19,8 @@
 
 
 int main(){
-    char** ArrayArray = (char**)malloc(sizeof(char*)*5);
+    //scene Main = __init_scene__("Main");
+    scene Main = __init_scene__("a");
+    printf("%s\n", Main.name);
 	return 0;
 }

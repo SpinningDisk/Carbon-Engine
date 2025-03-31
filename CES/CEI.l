@@ -4,7 +4,8 @@
 #include "../include/functions.h"
 //#include "../include/language.h"
 #include "../include/engine.h"
-scene Scene;
+project Project;
+unsigned int Scene_Index;
 %}
 
 %%
@@ -16,7 +17,7 @@ exit {
     return 0;}
 
 
-create\([a-zA-Z_]+,[[:space:]]?[0-9]+\)  {
+create\([a-zA-Z_]+[" "]?[0-9]+\)  {
     char* Name = yytext;
     int type = 0;
     Name = memmove(Name, Name+7, strlen(Name));
@@ -29,7 +30,7 @@ create\([a-zA-Z_]+,[[:space:]]?[0-9]+\)  {
                 Name[i] = '\0';
                for(int j=i+1; j<strlen(Name); j++){
                     type += ((int)Name[j]-48) * power(10, strlen(Name)-j-1); // char to int, then multiply by current position (left to right) -> 1234
-                    /*                                                                            1 * 10**3 + 2*10**2...*/
+                    //                                                                            1 * 10**3 + 2*10**2...
                 }
                 i = strlen(Name);
                 break;
@@ -37,17 +38,35 @@ create\([a-zA-Z_]+,[[:space:]]?[0-9]+\)  {
                 break;
         }
     }
-    printf("creating object %s\n", Name);
     object Object = __init_object__(Name, type);
-    Scene = appendObjectToScene(Object, Scene);
-
+    Project[Scene_Index] = appendObjectToScene(Object, Project[Scene_Index]);
 }
-
-[[:alpha:]]+[[:space:]]=[[:space:]]\"*\"   {//"
-    char* Variable_Name = yytext;
-    
+[\t]*[a-z]+[" "]?=[" "]?[-]?[0-9]+    {
+    char* Var_Name;
+    int Var_Value;
+    for(int i=0; i<strlen(yytext); i++){
+        switch((int)yytext[i]){
+            case 32: //space
+                for(int j=i; j<strlen(yytext)-1;j++){
+                    yytext[j] = yytext[j+1];
+                }
+                yytext[strlen(yytext)-1] = '\0';
+                i--;
+                break;
+            case 61: //equals sign
+                printf("hit equal sign at position %d!\n", i);
+                Var_Name = realloc(Var_Name, sizeof(char)*i);
+                for(int j=0; j<i; j++){
+                    Var_Name[i] = yytext[j];
+                }
+                printf("got variable name %s\n", Var_Name);
+                break;                                          // doesn't understand what a variable name is
+            default:
+                printf("%c = %d\n", yytext[i], yytext[i]);      // and doesn't understand what a variable value is
+                break;
+        }
+    }
 }
-
 %%
 
 int yywrap(){}
@@ -55,7 +74,11 @@ int main(){
 #include "../include/functions.h"
 #include "../include/engine.h"
 //#include "../include/language.h"
-Scene  = __init_scene__("Main");
+
+Scene_Index = 0;
+scene Scene  = __init_scene__("Main");
+Project = realloc(Project, sizeof(scene)+1);
+Project[0] = Scene;
 
 printf(">>");
 yylex();

@@ -60,7 +60,7 @@ scene __init_scene__(char* Name){
     Scene.objects = (object*)malloc(0);
     Scene.objectAmount = 0;
     Scene.objectNames = (char**)malloc(sizeof(char*));
-    Scene.objectNames[0] = (char*)malloc(sizeof(char));
+    Scene.objectNames[0] = "\0";
     Scene.id = -1;
     return Scene;
 }
@@ -81,7 +81,8 @@ scene appendObjectToScene(object Object, scene Scene){
     Scene.objects = realloc(Scene.objects, sizeof(object)*(Scene.objectAmount+1));
     Scene.objects[Scene.objectAmount] = Object;
     Scene.objectNames = (char**)realloc(Scene.objectNames, sizeof(char*)*(Scene.objectAmount+1));
-    //Scene.objectNames[Scene.objectAmount] = Object.name;
+    Scene.objectNames[Scene.objectAmount] = Object.name;
+    Scene.objectNames[Scene.objectAmount+1] = "\0";
     Scene.objectAmount++;
     return Scene;
 }

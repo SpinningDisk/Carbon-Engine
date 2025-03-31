@@ -18,10 +18,11 @@ typedef struct{
     char* name;
     object* objects;
     int objectAmount;
+    char** objectNames;
     int id;
     // some settings
 }scene;
-typedef scene* Project;
+typedef scene* project;
 
 
 // init functions
