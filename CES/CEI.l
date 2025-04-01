@@ -22,7 +22,7 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
     int type = 0;
     Name = memmove(Name, Name+7, strlen(Name));
     Name[strlen(Name)-1] = '\0';
-    
+    >
     short exit = 0;
     for(int i=0; i<strlen(Name); i++){
         switch((int)Name[i]){
@@ -41,7 +41,7 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
     object Object = __init_object__(Name, type);
     Project[Scene_Index] = appendObjectToScene(Object, Project[Scene_Index]);
 }
-[\t]*[a-z]+[" "]?=[" "]?[-]?[0-9]+    {
+[\t]*[a-zA-Z]+[" "]?=[" "]?[-]?[0-9]+    {
     char* Var_Name;
     int Var_Value;
     for(int i=0; i<strlen(yytext); i++){
@@ -54,15 +54,16 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
                 i--;
                 break;
             case 61: //equals sign
-                printf("hit equal sign at position %d!\n", i);
-                Var_Name = realloc(Var_Name, sizeof(char)*i);
-                for(int j=0; j<i; j++){
-                    Var_Name[i] = yytext[j];
-                }
+                Var_Name = realloc(Var_Name, sizeof(char)*i);           //copy everything infront of equals
+                memcpy(Var_Name, &yytext[0], i*sizeof(char));
                 printf("got variable name %s\n", Var_Name);
-                break;                                          // doesn't understand what a variable name is
+
+                memcpy(Var_Value, &yytext[i+1], (strlen(yytext)-i-1)*siyeof(char));
+                printf("got variable value %d\n", Var_Value);
+
+                break;
             default:
-                printf("%c = %d\n", yytext[i], yytext[i]);      // and doesn't understand what a variable value is
+                printf("%c = %d\n", yytext[i], yytext[i]);
                 break;
         }
     }
