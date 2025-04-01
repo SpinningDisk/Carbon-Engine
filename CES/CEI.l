@@ -22,7 +22,6 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
     int type = 0;
     Name = memmove(Name, Name+7, strlen(Name));
     Name[strlen(Name)-1] = '\0';
-    >
     short exit = 0;
     for(int i=0; i<strlen(Name); i++){
         switch((int)Name[i]){
@@ -43,7 +42,8 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
 }
 [\t]*[a-zA-Z]+[" "]?=[" "]?[-]?[0-9]+    {
     char* Var_Name;
-    int Var_Value;
+    char* Value_As_Char;
+    int* Var_Value;
     for(int i=0; i<strlen(yytext); i++){
         switch((int)yytext[i]){
             case 32: //space
@@ -58,8 +58,9 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
                 memcpy(Var_Name, &yytext[0], i*sizeof(char));
                 printf("got variable name %s\n", Var_Name);
 
-                memcpy(Var_Value, &yytext[i+1], (strlen(yytext)-i-1)*siyeof(char));
-                printf("got variable value %d\n", Var_Value);
+                Value_As_Char = realloc(Value_As_Char, sizeof(char)*(strlen(yytext)-i-1));
+                memcpy(Value_As_Char, &yytext[i+1], (strlen(yytext)-i-1)*sizeof(char));
+                printf("got variable value %s\n", Value_As_Char);
 
                 break;
             default:

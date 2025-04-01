@@ -769,7 +769,6 @@ YY_RULE_SETUP
     int type = 0;
     Name = memmove(Name, Name+7, strlen(Name));
     Name[strlen(Name)-1] = '\0';
-    
     short exit = 0;
     for(int i=0; i<strlen(Name); i++){
         switch((int)Name[i]){
@@ -791,10 +790,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 44 "CES/CEI.l"
+#line 43 "CES/CEI.l"
 {
     char* Var_Name;
-    int Var_Value;
+    char* Value_As_Char;
+    int* Var_Value;
     for(int i=0; i<strlen(yytext); i++){
         switch((int)yytext[i]){
             case 32: //space
@@ -805,12 +805,17 @@ YY_RULE_SETUP
                 i--;
                 break;
             case 61: //equals sign
-                Var_Name = realloc(Var_Name, sizeof(char)*i);
+                Var_Name = realloc(Var_Name, sizeof(char)*i);           //copy everything infront of equals
                 memcpy(Var_Name, &yytext[0], i*sizeof(char));
                 printf("got variable name %s\n", Var_Name);
-                break;                                          // doesn't understand what a variable name is
+
+                Value_As_Char = realloc(Value_As_Char, sizeof(char)*(strlen(yytext)-i-1));
+                memcpy(Value_As_Char, &yytext[i+1], (strlen(yytext)-i-1)*sizeof(char));
+                printf("got variable value %s\n", Value_As_Char);
+
+                break;
             default:
-                printf("%c = %d\n", yytext[i], yytext[i]);      // and doesn't understand what a variable value is
+                printf("%c = %d\n", yytext[i], yytext[i]);
                 break;
         }
     }
@@ -818,10 +823,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 67 "CES/CEI.l"
+#line 72 "CES/CEI.l"
 ECHO;
 	YY_BREAK
-#line 825 "lex.yy.c"
+#line 830 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1826,7 +1831,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 67 "CES/CEI.l"
+#line 72 "CES/CEI.l"
 
 
 int yywrap(){}
