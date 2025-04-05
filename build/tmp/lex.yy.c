@@ -1,5 +1,5 @@
 
-#line 3 "lex.yy.c"
+#line 2 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -466,8 +466,8 @@ char *yytext;
 #include "../include/engine.h"
 project Project;
 unsigned int Scene_Index;
+#line 469 "lex.yy.c"
 #line 470 "lex.yy.c"
-#line 471 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -686,7 +686,7 @@ YY_DECL
 	{
 #line 11 "CES/CEI.l"
 
-#line 690 "lex.yy.c"
+#line 689 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -809,7 +809,17 @@ YY_RULE_SETUP
                 memcpy(Var_Name, &yytext[0], i*sizeof(char));
                 printf("got variable name %s\n", Var_Name);
 
-                Value_As_Char = realloc(Value_As_Char, sizeof(char)*(strlen(yytext)-i-1));
+                for(int j=i; j<strlen(yytext)-1;j++){
+                    switch(yytext[j]){
+                        case 32:
+                            for(int k=j; k<strlen(yytext)-1;k++){
+                                yytext[k] = yytext[k+1];
+                            }
+                            yytext[strlen(yytext)-1] = '\0';
+                            j--;
+                    }
+                }
+                Value_As_Char = realloc(Value_As_Char, sizeof(char)*(strlen(yytext)-i-1));      //copy everything behind equals
                 memcpy(Value_As_Char, &yytext[i+1], (strlen(yytext)-i-1)*sizeof(char));
                 printf("got variable value %s\n", Value_As_Char);
 
@@ -823,10 +833,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 72 "CES/CEI.l"
+#line 82 "CES/CEI.l"
 ECHO;
 	YY_BREAK
-#line 830 "lex.yy.c"
+#line 839 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1831,7 +1841,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 72 "CES/CEI.l"
+#line 82 "CES/CEI.l"
 
 
 int yywrap(){}
@@ -1844,6 +1854,9 @@ Scene_Index = 0;
 scene Scene  = __init_scene__("Main");
 Project = realloc(Project, sizeof(scene)+1);
 Project[0] = Scene;
+
+//program stuff
+
 
 printf(">>");
 yylex();

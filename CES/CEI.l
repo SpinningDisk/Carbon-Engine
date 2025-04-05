@@ -58,7 +58,17 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
                 memcpy(Var_Name, &yytext[0], i*sizeof(char));
                 printf("got variable name %s\n", Var_Name);
 
-                Value_As_Char = realloc(Value_As_Char, sizeof(char)*(strlen(yytext)-i-1));
+                for(int j=i; j<strlen(yytext)-1;j++){
+                    switch(yytext[j]){
+                        case 32:
+                            for(int k=j; k<strlen(yytext)-1;k++){
+                                yytext[k] = yytext[k+1];
+                            }
+                            yytext[strlen(yytext)-1] = '\0';
+                            j--;
+                    }
+                }
+                Value_As_Char = realloc(Value_As_Char, sizeof(char)*(strlen(yytext)-i-1));      //copy everything behind equals
                 memcpy(Value_As_Char, &yytext[i+1], (strlen(yytext)-i-1)*sizeof(char));
                 printf("got variable value %s\n", Value_As_Char);
 
@@ -81,6 +91,9 @@ Scene_Index = 0;
 scene Scene  = __init_scene__("Main");
 Project = realloc(Project, sizeof(scene)+1);
 Project[0] = Scene;
+
+//program stuff
+
 
 printf(">>");
 yylex();
