@@ -17,28 +17,8 @@ exit {
     return 0;}
 
 
-create\([a-zA-Z_]+[" "]?[0-9]+\)  {
-    char* Name = yytext;
-    int type = 0;
-    Name = memmove(Name, Name+7, strlen(Name));
-    Name[strlen(Name)-1] = '\0';
-    short exit = 0;
-    for(int i=0; i<strlen(Name); i++){
-        switch((int)Name[i]){
-            case 44:
-                Name[i] = '\0';
-               for(int j=i+1; j<strlen(Name); j++){
-                    type += ((int)Name[j]-48) * power(10, strlen(Name)-j-1); // char to int, then multiply by current position (left to right) -> 1234
-                    //                                                                            1 * 10**3 + 2*10**2...
-                }
-                i = strlen(Name);
-                break;
-            default:
-                break;
-        }
-    }
-    object Object = __init_object__(Name, type);
-    Project[Scene_Index] = appendObjectToScene(Object, Project[Scene_Index]);
+create\([a-zA-Z_]+[" "]?[0-9]+\)  { 
+    return 0;
 }
 [\t]*[a-zA-Z]+[" "]?=[" "]?[-]?[0-9]+    {
     char* Var_Name;
@@ -78,6 +58,9 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
                 break;
         }
     }
+}
+[\t]*[a-zA-Z]+[" "]?=[" "]?[-]?\"[^\"]+\"    {
+    printf("hit string var!\n");
 }
 %%
 
