@@ -1,0 +1,17 @@
+<svg width="71" height="80" viewBox="0 0 71 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M35.9373 5.42875L5.93726 23.4287" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M5.67999 23L5.67999 57" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M5.67999 23L35.68 40" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M35.68 40L65.68 23" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M35.68 75V40" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M5.67999 57L35.68 75" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M35.68 75L65.68 57" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M65.68 56L65.68 23" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<path d="M65.68 23L35.68 5" stroke="#BFBFD2" stroke-width="3" stroke-linecap="round"/>
+<circle cx="35.68" cy="5.166" r="5" fill="#148ADF"/>
+<circle cx="35.68" cy="74.8334" r="5" fill="#148ADF"/>
+<circle cx="65.36" cy="23.333" r="5" fill="#148ADF"/>
+<circle cx="6" cy="23.333" r="5" fill="#148ADF"/>
+<circle cx="65.36" cy="56.666" r="5" fill="#148ADF"/>
+<circle cx="6" cy="56.666" r="5" fill="#148ADF"/>
+</svg>
