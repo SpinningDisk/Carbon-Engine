@@ -59,10 +59,14 @@ CEI:
 	ld -r $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -L$(OutLoc)lib -lfunctions -o $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 	ar rcs $(OutLoc)lib/lib$(LibEngineSrc:.c=.a) $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 
-	
+	$(CC) -c -fPIC $(LibLoc)$(LibLanguageSrc) -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -Wall -Wextra
+	ld -r $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L $(OutLoc)lib -lfunctions -lengine -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
+	ar rcs $(OutLoc)lib/lib$(LibLanguageSrc:.c=.a) $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
+
+
 	flex $(LanguageLoc)$(LanguageSrc)
 	mv lex.yy.c $(OutLoc)tmp/lex.yy.c
-	$(CC) -o $(OutLoc)CarbonEngineInterpreter -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive $(OutLoc)tmp/lex.yy.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
+	$(CC) -o $(OutLoc)CarbonEngineInterpreter -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -llanguage -Wl,--no-whole-archive $(OutLoc)tmp/lex.yy.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
 
 dev:
 	cp include/engine.h $(OutLoc)include/
