@@ -1,19 +1,26 @@
 #include <stdint.h>
+#include <malloc.h>
 #include <float.h>
 #include <string.h>
-#include "engine.h"
+#include <stdio.h>
+#include "../include/engine.h"
+
+
+typedef int ceT_Int[1];
+//typedef int_fast8_t ceT_Int;
+typedef char* ceT_String;
 
 typedef enum{
-    ceT_Int;
-    ceT_String;
-    ceT_Array;
-    ceT_HashTable;
-    ceT_EulerRotation;
-    ceT_Quaternion;
+    ceT_Int_id,
+    ceT_String_id,
+    ceT_Array_id,
+    ceT_HashTable_id,
+    ceT_EulerRotation_id,
+    ceT_Quaternion_id,
 
-    ceT_Object;
-    ceT_Scene;
-    ceT_Project;
+    ceT_Object_id,
+    ceT_Scene_id,
+    ceT_Project_id,
 }CEtypes_id;
 typedef struct{
     char* name;
@@ -21,8 +28,6 @@ typedef struct{
     void* data;
     int livetime;
 }CEdata;
-typedef int_fast8_t ceT_Int;
-typedef char* ceT_String;
 typedef struct{
     void** data;
     CEtypes_id* types;
@@ -32,9 +37,9 @@ typedef struct{
 typedef struct{
     ceT_Array keys;
     ceT_Array values;
-}ceT_HashTable
-typedef float[4][4][4] ceT_EulerRotation;
-typedef float[5] ceT_Quaternion;
+}ceT_HashTable;
+typedef float ceT_EulerRotation[4][4][4];
+typedef float ceT_Quaternion[5];
 typedef object ceT_Object;
 typedef scene ceT_Scene;
 typedef project ceT_Project;
@@ -47,17 +52,25 @@ typedef struct{
     unsigned int variableAmount;
 }CEprogram;
 
-CEprogramm __init_programm__(){
+CEprogram __init_programm__(){
     CEprogram Program;
     Program.programCounter = 0;
     Program.tabLevel = 0;
-    Program.CEdata = (CEdata*)malloc(sizeof(CEdata));
+    Program.data = (CEdata*)malloc(sizeof(CEdata));
     Program.variableAmount = 0;
+    return Program;
 }
 
 
 // base functions in interpreter
-create(char* Line, CEprogram)
+CEprogram create(char* Line, CEprogram Program){
+    if(Line[0]=='\t'){
+        printf("hit tab at 0!\n");
+    }else if(Line[0]==' '){
+        printf("hit space at 0!\n");
+    };
+    return Program;
+}
 
 
 void garbage_collect(){

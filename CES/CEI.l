@@ -59,6 +59,9 @@ create\([a-zA-Z_]+[" "]?[0-9]+\)  {
         }
     }
 }
+[\t]*hans   {
+    create(yytext, Program);
+}
 [\t]*[a-zA-Z]+[" "]?=[" "]?[-]?\"[^\"]+\"    {
     printf("hit string var!\n");
 }
@@ -69,6 +72,7 @@ int main(){
 #include "../include/functions.h"
 #include "../include/engine.h"
 //#include "../include/language.h"
+CEprogram Program = __init_program__();
 
 Scene_Index = 0;
 scene Scene  = __init_scene__("Main");
