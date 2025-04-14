@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 8
-#define YY_END_OF_BUFFER 9
+#define YY_NUM_RULES 10
+#define YY_END_OF_BUFFER 11
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -360,31 +360,33 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[43] =
+static const flex_int16_t yy_accept[64] =
     {   0,
-        0,    0,    9,    1,    1,    2,    1,    1,    1,    1,
-        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    5,    0,    0,    0,    0,    0,    0,    5,    0,
-        3,    6,    7,    7,    0,    0,    0,    0,    0,    0,
-        4,    0
+        0,    0,   11,    1,    2,    1,    1,    1,    1,    1,
+        1,    1,    1,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,    9,    9,    9,
+        5,    9,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,    0,    3,    0,
+        0,    0,    0,    8,    0,    6,    0,    0,    7,    0,
+        0,    4,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    4,    1,    5,    1,    1,    1,    1,    1,    6,
-        7,    1,    1,    1,    8,    1,    1,    9,    9,    9,
+        1,    3,    1,    3,    1,    1,    1,    1,    1,    4,
+        5,    6,    6,    7,    8,    6,    6,    9,    9,    9,
         9,    9,    9,    9,    9,    9,    9,    1,    1,    1,
        10,    1,    1,    1,   11,   11,   11,   11,   11,   11,
        11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
        11,   11,   11,   11,   11,   11,   11,   11,   11,   11,
         1,    1,    1,    1,   12,    1,   13,   11,   14,   11,
 
-       15,   11,   11,   16,   17,   11,   11,   11,   11,   18,
-       11,   11,   11,   19,   20,   21,   11,   11,   11,   22,
-       11,   11,    1,    1,    1,    1,    1,    1,    1,    1,
+       15,   16,   17,   11,   18,   11,   11,   19,   11,   20,
+       21,   22,   11,   23,   24,   25,   11,   26,   11,   27,
+       11,   11,   28,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -401,61 +403,81 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[23] =
+static const YY_CHAR yy_meta[29] =
     {   0,
-        1,    2,    1,    1,    1,    1,    1,    1,    1,    1,
-        3,    4,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,    3
+        1,    1,    2,    3,    4,    5,    6,    5,    7,    8,
+        9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
+        9,    9,    9,    9,    9,    9,    9,    1
     } ;
 
-static const flex_int16_t yy_base[46] =
+static const flex_int16_t yy_base[71] =
     {   0,
-        0,    0,   79,   80,   21,   80,   36,   59,   55,   63,
-       23,    0,   62,   64,   43,   58,   55,   53,   19,   21,
-       26,   61,   56,   47,   47,   52,   51,   27,   40,   34,
-        0,    0,   80,   45,   28,   28,    0,   49,   24,   35,
-       80,   80,   57,   60,   62
+        0,    0,  130,  157,  157,   26,   27,   30,   38,    8,
+       11,   21,  106,   40,  101,   43,  113,   46,   51,   99,
+      111,  115,   40,   39,   94,   28,   46,   57,    0,  107,
+      106,    0,   45,   47,   63,   59,   53,   52,   70,    0,
+       75,   56,   65,  109,  108,   81,   79,   83,  157,   82,
+       86,  103,    0,  157,   87,  157,  100,   89,   97,   95,
+       90,  157,  157,  110,  118,  126,  134,  141,  147,   94
     } ;
 
-static const flex_int16_t yy_def[46] =
+static const flex_int16_t yy_def[71] =
     {   0,
-       42,    1,   42,   42,   43,   42,   43,    7,    7,    7,
-       43,    7,    7,   42,   42,    7,    7,    7,   42,   44,
-       42,   42,    7,    7,    7,   44,   44,   44,   44,    7,
-        7,    7,   42,   44,    7,    7,   45,   45,   42,   42,
-       42,    0,   42,   42,   42
+       63,    1,   63,   63,   63,   64,   65,   66,   65,    9,
+        9,    9,    9,   64,    9,   66,   63,   66,   67,    9,
+       63,   67,    9,    9,    9,    9,    9,   67,   67,   67,
+       67,   67,    9,    9,    9,    9,    9,    9,    9,   68,
+       66,    9,    9,   63,   63,   66,    9,    9,   63,   63,
+       66,   69,   70,   63,   66,   63,   69,   70,   66,   63,
+       63,   63,    0,   63,   63,   63,   63,   63,   63,   63
     } ;
 
-static const flex_int16_t yy_nxt[103] =
+static const flex_int16_t yy_nxt[186] =
     {   0,
         4,    5,    6,    4,    4,    4,    4,    4,    4,    4,
-        7,    4,    7,    8,    9,   10,    7,    7,    7,    7,
-        7,    7,   11,   26,   11,   26,   21,   22,   28,   29,
-       26,   34,   40,   37,   22,   29,   13,   42,   13,   14,
-       14,   41,   36,   40,   33,   15,   19,   20,   29,   42,
-       21,   22,   39,   39,   35,   33,   42,   40,   12,   12,
-       27,   27,   27,   27,   38,   38,   32,   31,   30,   22,
-       25,   24,   23,   15,   18,   18,   17,   16,   42,    3,
-       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
-       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
+        7,    8,    7,    9,   10,   11,    7,    7,   12,    7,
+        7,   13,    7,    7,    7,    7,    7,    4,   14,   17,
+       20,   25,   21,   20,   24,   18,   19,   16,   18,   22,
+       17,   26,   14,   20,   36,   21,   18,   19,   21,   18,
+       20,   16,   22,   28,   33,   22,   34,   38,   30,   31,
+       23,   20,   20,   37,   30,   31,   40,   20,   20,   20,
+       41,   39,   42,   44,   20,   20,   43,   21,   20,   48,
+       47,   20,   52,   21,   22,   20,   53,   20,   21,   21,
+       22,   60,   20,   51,   62,   22,   22,   61,   61,   21,
 
-       42,   42
+       46,   20,   58,   61,   56,   20,   22,   56,   55,   54,
+       59,   15,   50,   49,   31,   31,   35,   32,   15,   20,
+       22,   20,   19,   20,   20,   20,   20,   18,   27,   63,
+       63,   63,   18,   18,   18,   29,   29,   29,   29,   63,
+       29,   63,   29,   45,   45,   63,   45,   63,   63,   45,
+       57,   63,   63,   63,   63,   57,    3,   63,   63,   63,
+       63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
+       63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
+       63,   63,   63,   63,   63
     } ;
 
-static const flex_int16_t yy_chk[103] =
+static const flex_int16_t yy_chk[186] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    5,   19,   11,   20,   19,   19,   20,   20,
-       21,   28,   39,   36,   21,   28,    5,    7,   11,    7,
-        7,   40,   35,   40,   29,    7,   15,   15,   29,   34,
-       15,   15,   38,   38,   30,   27,   26,   38,   43,   43,
-       44,   44,   44,   44,   45,   45,   25,   24,   23,   22,
-       18,   17,   16,   14,   13,   10,    9,    8,    3,   42,
-       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
-       42,   42,   42,   42,   42,   42,   42,   42,   42,   42,
+        1,    1,    1,    1,    1,    1,    1,    1,    6,    7,
+       10,   11,    8,   11,   10,    7,    7,    6,    7,    8,
+        9,   12,   14,   12,   26,   16,    9,    9,   18,    9,
+       26,   14,   16,   19,   23,   18,   24,   33,   19,   19,
+        9,   24,   23,   27,   28,   28,   35,   33,   27,   34,
+       36,   34,   37,   39,   38,   37,   38,   41,   42,   43,
+       42,   36,   47,   46,   41,   35,   48,   43,   51,   55,
+       46,   58,   39,   46,   61,   51,   55,   58,   61,   59,
 
-       42,   42
+       41,   47,   70,   60,   57,   48,   59,   52,   51,   50,
+       55,   64,   45,   44,   31,   30,   25,   22,   64,   65,
+       21,   20,   17,   15,   65,   65,   65,   66,   13,    3,
+        0,    0,   66,   66,   66,   67,   67,   67,   67,    0,
+       67,    0,   67,   68,   68,    0,   68,    0,    0,   68,
+       69,    0,    0,    0,    0,   69,   63,   63,   63,   63,
+       63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
+       63,   63,   63,   63,   63,   63,   63,   63,   63,   63,
+       63,   63,   63,   63,   63
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -477,12 +499,13 @@ char *yytext;
 #include <stdio.h>
 #include <regex.h>
 #include "../include/functions.h"
-//#include "../include/language.h"
+#include "../include/language.h"
 #include "../include/engine.h"
 project Project;
+CESframe Program;
 unsigned int Scene_Index;
-#line 484 "lex.yy.c"
-#line 485 "lex.yy.c"
+#line 507 "lex.yy.c"
+#line 508 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -699,9 +722,9 @@ YY_DECL
 		}
 
 	{
-#line 11 "CES/CEI.l"
+#line 12 "CES/CEI.l"
 
-#line 704 "lex.yy.c"
+#line 727 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -728,13 +751,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 43 )
+				if ( yy_current_state >= 64 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 80 );
+		while ( yy_base[yy_current_state] != 157 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -760,36 +783,37 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 12 "CES/CEI.l"
+#line 13 "CES/CEI.l"
 
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 13 "CES/CEI.l"
+#line 14 "CES/CEI.l"
 {printf(">>");}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 15 "CES/CEI.l"
+#line 16 "CES/CEI.l"
 {
     printf("\n\tbye!\n");
-    return 0;}
+    return 0;
+}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "CES/CEI.l"
+#line 22 "CES/CEI.l"
 { 
     return 0;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 23 "CES/CEI.l"
+#line 25 "CES/CEI.l"
 {
-    char* Var_Name;
-    char* Value_As_Char;
-    int* Var_Value;
+    char* Var_Name = (char*)malloc(sizeof(char));
+    char* Value_As_Char = (char*)malloc(sizeof(char));
+    int Var_Value = 1;
     for(int i=0; i<strlen(yytext); i++){
         switch((int)yytext[i]){
             case 32: //space
@@ -800,53 +824,114 @@ YY_RULE_SETUP
                 i--;
                 break;
             case 61: //equals sign
-                Var_Name = realloc(Var_Name, sizeof(char)*i);           //copy everything infront of equals
+                char* Tmp = realloc(Var_Name, sizeof(char)*i);           //copy everything infront of equals
+                Var_Name = Tmp;
                 memcpy(Var_Name, &yytext[0], i*sizeof(char));
-                printf("got variable name %s\n", Var_Name);
 
                 for(int j=i; j<strlen(yytext)-1;j++){
                     switch(yytext[j]){
-                        case 32:
+                        case 32:        // remove space
                             for(int k=j; k<strlen(yytext)-1;k++){
                                 yytext[k] = yytext[k+1];
                             }
                             yytext[strlen(yytext)-1] = '\0';
                             j--;
+                            break;
+                        case 45:        // make negativ
+                            Var_Value = -1;
+                            break;
                     }
                 }
                 Value_As_Char = realloc(Value_As_Char, sizeof(char)*(strlen(yytext)-i-1));      //copy everything behind equals
                 memcpy(Value_As_Char, &yytext[i+1], (strlen(yytext)-i-1)*sizeof(char));
-                printf("got variable value %s\n", Value_As_Char);
+                int Num_len = strlen(yytext)-i-1;          // numbers have multiple digits, so we need to make sure we only take the existing digits
+                int tmp = 0;
+                switch(Var_Value){
+                    case -1:
+                        for(int j=1; j<Num_len; j++){
+                            tmp = tmp-((Value_As_Char[j]-48)*(power(10, (10, Num_len-j-1))));
+                        }
+                        break;
+                    case 1:
+                        for(int j=0; j<Num_len; j++){
+                            tmp = tmp+((Value_As_Char[j]-48)*(power(10, (10, Num_len-j-1))));
+                        }
+                        break;
+                }
+                Var_Value = tmp;
 
                 break;
             default:
-                printf("%c = %d\n", yytext[i], yytext[i]);
                 break;
-        }
+        }       // Name stored in Var_Name; Value stored in Var_Value
     }
+    switch(Program.variableAmount){
+        case 0:
+            break;
+        default:
+            break;
+    }
+        
+    CESvariable New_Var;
+    New_Var.name = Var_Name;
+    New_Var.type = CEType_int;
+    int* Var_Value_Ptr = (int*)malloc(sizeof(int));
+    Var_Value_Ptr[0] = Var_Value;
+    New_Var.data = Var_Value_Ptr;
+    Program = storeVariable(Program, New_Var);
+    
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 62 "CES/CEI.l"
+#line 97 "CES/CEI.l"
 {
-    create(yytext, Program);
+    char* Name = (char*)malloc((strlen(yytext)-7)*sizeof(char));
+    memcpy(Name, &yytext[6], (strlen(yytext)-7)*sizeof(char));
+    int Var_Index = return_Index(Name, Program.variableNames, Program.variableAmount);
+    switch(Var_Index){
+        case -1:
+            fprintf(stderr, "No such variable: \"%s\"\n", Name);
+            break;
+        default:
+        
+            printf("%d\n", *(int*)Program.variables[Var_Index].data);
+            break;
+    }
 }
 	YY_BREAK
 case 7:
-/* rule 7 can match eol */
 YY_RULE_SETUP
-#line 65 "CES/CEI.l"
-{
-    printf("hit string var!\n");
+#line 111 "CES/CEI.l"
+{printf("start\n");
+    for(int i=0; i<Program.variableAmount;i++){
+        printf("var at index %d:\n", i);
+        printf("    in list as %s\n", Program.variableNames[i]);
+        printf("    in Var as %s\n", Program.variables[i].name);
+        printf("    stores value %d\n", *(int*)Program.variables[i].data);
+    }
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 68 "CES/CEI.l"
+#line 119 "CES/CEI.l"
+{
+    printf("hit loop\n");
+}
+	YY_BREAK
+case 9:
+YY_RULE_SETUP
+#line 124 "CES/CEI.l"
+{
+    printf("I'm not going to implement that rn...\n");
+}
+	YY_BREAK
+case 10:
+YY_RULE_SETUP
+#line 128 "CES/CEI.l"
 ECHO;
 	YY_BREAK
-#line 849 "lex.yy.c"
+#line 934 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1143,7 +1228,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 43 )
+			if ( yy_current_state >= 64 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1171,11 +1256,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 43 )
+		if ( yy_current_state >= 64 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 42);
+	yy_is_jam = (yy_current_state == 63);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1851,20 +1936,21 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 68 "CES/CEI.l"
+#line 128 "CES/CEI.l"
 
 
 int yywrap(){}
 int main(){
 #include "../include/functions.h"
 #include "../include/engine.h"
-//#include "../include/language.h"
-CEprogram Program = __init_program__();
+#include "../include/language.h"
 
 Scene_Index = 0;
 scene Scene  = __init_scene__("Main");
 Project = realloc(Project, sizeof(scene)+1);
 Project[0] = Scene;
+
+Program = __init_frame__();
 
 //program stuff
 

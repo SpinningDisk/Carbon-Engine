@@ -1,78 +1,54 @@
+#include "../include/engine.h"
 #include <stdint.h>
 #include <malloc.h>
 #include <float.h>
 #include <string.h>
 #include <stdio.h>
-#include "../include/engine.h"
-
-
-typedef int ceT_Int[1];
-//typedef int_fast8_t ceT_Int;
-typedef char* ceT_String;
 
 typedef enum{
-    ceT_Int_id,
-    ceT_String_id,
-    ceT_Array_id,
-    ceT_HashTable_id,
-    ceT_EulerRotation_id,
-    ceT_Quaternion_id,
+    CEType_int = sizeof(int),
+    CEType_string = sizeof(char*),
+    CEType_object = sizeof(object),
+    CEType_euler = sizeof(float)*3*3,
+    CEType_quaternion = sizeof(float)*4,
+    //expand
+}CETypes;
 
-    ceT_Object_id,
-    ceT_Scene_id,
-    ceT_Project_id,
-}CEtypes_id;
 typedef struct{
     char* name;
-    CEtypes_id type;
+    CETypes type;
     void* data;
-    int livetime;
-}CEdata;
-typedef struct{
-    void** data;
-    CEtypes_id* types;
-    size_t capacity;
-    size_t length;
-}ceT_Array;
-typedef struct{
-    ceT_Array keys;
-    ceT_Array values;
-}ceT_HashTable;
-typedef float ceT_EulerRotation[4][4][4];
-typedef float ceT_Quaternion[5];
-typedef object ceT_Object;
-typedef scene ceT_Scene;
-typedef project ceT_Project;
-
+}CESvariable;
 
 typedef struct{
-    int programCounter;
-    int tabLevel;
-    CEdata* data;
+    CESvariable* variables;
+    char** variableNames;
     unsigned int variableAmount;
-}CEprogram;
+    char** subProgram;
+}CESframe;
 
-CEprogram __init_programm__(){
-    CEprogram Program;
-    Program.programCounter = 0;
-    Program.tabLevel = 0;
-    Program.data = (CEdata*)malloc(sizeof(CEdata));
+CESframe __init_frame__(){
+    CESframe Program;
+    Program.variables = (CESvariable*)malloc(sizeof(CESvariable));
     Program.variableAmount = 0;
     return Program;
 }
 
-
-// base functions in interpreter
-CEprogram create(char* Line, CEprogram Program){
-    if(Line[0]=='\t'){
-        printf("hit tab at 0!\n");
-    }else if(Line[0]==' '){
-        printf("hit space at 0!\n");
+CESframe storeVariable(CESframe Program, CESvariable Variable){
+    CESvariable* New_Variables = realloc(Program.variables, (Program.variableAmount+1)*sizeof(CESvariable));
+    char** New_Names = realloc(Program.variableNames, sizeof(char*)*(Program.variableAmount+1));
+    if(New_Variables==NULL){
+        fprintf(stderr, "Error during variable declaration: not enough memory available!\nreturning\n");
     };
+    if(New_Names==NULL){
+        fprintf(stderr, "Error during variable declaration: not enough memory available!\nreturning\n");
+    };
+    Program.variables = New_Variables;
+    Program.variables[Program.variableAmount] = Variable;
+
+    New_Names[Program.variableAmount] = Variable.name;
+    Program.variableNames = New_Names;
+    Program.variableAmount++;
     return Program;
-}
 
-
-void garbage_collect(){
-    return;
 }
