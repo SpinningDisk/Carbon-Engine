@@ -5,8 +5,9 @@ LanguageLoc = CES/
 OutLoc = build/
 LibFunctionsSrc = functions.c 
 LibEngineSrc = engine.c
-LanguageSrc = CEI.l
+LanguageSrc = lexer.l
 LibLanguageSrc = language.c
+GramerSrc = grammar.y
 
 
 LanguageOut = build/CES/CarbonEngineInterpreter.o
@@ -43,6 +44,8 @@ shared:
 	$(CC) -c -fPIC $(LibLoc)$(LibEngineSrc) -o $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -Wall -Wextra -I$(OutLoc)include -L$(OutLoc)lib
 	$(CC) -shared -o $(OutLoc)lib/lib$(LibEngineSrc:.c=.so) $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -L$(OutLoc)lib -lfunctions -Wall -Wextra -I$(OutLoc)include
 
+	
+
 	$(CC) -c -fPIC $(LibLoc)$(LibLanguageSrc) -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -Wall -Wextra -I$(OutLoc)include -L$(OutLoc)lib
 	$(CC) -shared -o $(OutLoc)lib/lib$(LibLanguageSrc:.c=.so) $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L$(OutLoc)lib -Wall -Wextra $(OutLoc)include -v
 
@@ -63,10 +66,16 @@ CEI:
 	ld -r $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L $(OutLoc)lib -lfunctions -lengine -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
 	ar rcs $(OutLoc)lib/lib$(LibLanguageSrc:.c=.a) $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
 
+	bison -d $(LanguageLoc)$(GramerSrc)
 
 	flex $(LanguageLoc)$(LanguageSrc)
+	$(CC) $(LanguageLoc)CEI.c $(GramerSrc:.y=.tab.c) lex.yy.c -o $(OutLoc)CEI -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -llanguage -Wl,--no-whole-archive -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra
+
+	mv $(GramerSrc:.y=.tab.c) build/tmp/
+	mv $(GramerSrc:.y=.tab.h) build/include/
 	mv lex.yy.c $(OutLoc)tmp/lex.yy.c
-	$(CC) -o $(OutLoc)CarbonEngineInterpreter -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -llanguage -Wl,--no-whole-archive $(OutLoc)tmp/lex.yy.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
+
+#	$(CC) -o $(OutLoc)CarbonEngineInterpreter -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -llanguage -Wl,--no-whole-archive $(OutLoc)tmp/lex.yy.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
 
 dev:
 	cp include/engine.h $(OutLoc)include/
@@ -82,5 +91,5 @@ dev:
 	$(CC) -o $(OutLoc)main.o -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive $(OutLoc)devtest.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
 	$(OutLoc)main.o
 clean:
-	rm -rf $(OutLoc)lib $(OutLoc)include $(OutLoc)tmp $(OutLoc)CarbonEngineInterpreter
+	rm -rf $(OutLoc)lib $(OutLoc)include $(OutLoc)tmp $(OutLoc)CEI
 	mkdir -p $(OutLoc)tmp $(OutLoc)lib $(OutLoc)include
