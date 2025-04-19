@@ -5,14 +5,16 @@
     
 %%
 \n  {return '\n';}
-exit\(\)        {return 0;}
+exit\(\)                {return EXIT;}
+while                   {return WHILE;}
+
 
 
 [0-9]+          { yylval.num = atoi(yytext); return NUMBER; }
 " "?"+"" "?             { return PLUS; }
 " "?"-"" "?             { return MINUS; }
-" "?"*"" "?             { return MUL; }
-" "?"/"" "?             { return DIV; }
+" "?"*"" "?             { return MULTIPLY; }
+" "?"/"" "?             { return DIVIDE; }
 " "?"="" "?             { return EQ; }
 " "?"("" "?             { return PARENT_L;}
 " "?")"" "?             { return PARENT_R;}
@@ -21,6 +23,7 @@ exit\(\)        {return 0;}
                          yylval.str = strdup(yytext); return STRING;}
 " "?"int "              { yylval.type = (int)TYPE_INT; return lTYPE;}
 " "?"str "              { yylval.type = (int)TYPE_STR; return lTYPE;}
+
 
 .                       { return yytext[0];}
 %%

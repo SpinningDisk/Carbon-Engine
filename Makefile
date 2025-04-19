@@ -80,6 +80,8 @@ CEI:
 dev:
 	cp include/engine.h $(OutLoc)include/
 	cp include/functions.h $(OutLoc)include/
+	cp include/language.h $(OutLoc)include/
+
 
 	$(CC) -c -fPIC $(LibLoc)$(LibFunctionsSrc) -o $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o) -Wall -Wextra
 	ar rcs $(OutLoc)lib/lib$(LibFunctionsSrc:.c=.a) $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o)
@@ -87,6 +89,11 @@ dev:
 	$(CC) -c -fPIC $(LibLoc)$(LibEngineSrc) -o $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -Wall -Wextra -I$(OutLoc)include
 	ld -r $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -L$(OutLoc)lib -lfunctions -o $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 	ar rcs $(OutLoc)lib/lib$(LibEngineSrc:.c=.a) $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
+
+	$(CC) -c -fPIC $(LibLoc)$(LibLanguageSrc) -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -Wall -Wextra
+	ld -r $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L $(OutLoc)lib -lfunctions -lengine -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
+	ar rcs $(OutLoc)lib/lib$(LibLanguageSrc:.c=.a) $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
+
 
 	$(CC) -o $(OutLoc)main.o -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive $(OutLoc)devtest.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
 	$(OutLoc)main.o

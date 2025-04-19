@@ -2,19 +2,28 @@
 #define LANGUAGE_H
 
 #include "engine.h"
+#include <stddef.h>
+
 
 typedef enum{
     PRINT_VAR,
+    
     STORE,
+    LOAD,
+    PUSH,
+
     JMP,
-    JMP_GT0,
-    JMP_LT0,
-    WHILE_COND,
-    // for in future versions; just a scratch
+    JMP_GT,
+    JMP_LT,
+    
+    BLOCK_START,
     BLOCK_END,
-    EXPRESSION_CONST,
-    EXPRESSION_VAR,
-}instructions;
+
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+}instruction;
 typedef enum{
     TYPE_INT,
     TYPE_STR,
@@ -30,11 +39,10 @@ typedef enum{
     BC_TYPE_VAR,
 }bcTypes;
 typedef struct{
-    unsigned int line;
-    instructions opcode;
+    instruction opcode;
     int operantAmount;
     void** operants;
-    bcTypes* type;
+    bcTypes* types;
 }bytecode;
 typedef struct{
     char* name;
@@ -47,6 +55,9 @@ typedef struct{
     unsigned int variableAmount;
     char** variableNames;
     bytecode* programHistory;
+    unsigned int programHistoryLength;
+    void** stack;
+    void** heap;
 }CEVM;
 
 CEVM bootVM(void);
