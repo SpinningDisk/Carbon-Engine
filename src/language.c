@@ -31,7 +31,6 @@ typedef enum{
     TYPE_ARR,
     TYPE_NULL,
 }ceTypes;
-char* ceTypesReadable(ceTypes Type);
 typedef enum{
     BC_TYPE_INT,
     BC_TYPE_STR,
@@ -52,14 +51,59 @@ typedef struct{
     ceTypes type;
 }ceVariable;
 typedef struct{
+    void** data;
+    unsigned int len;
+}stack_queue;
+typedef struct{
     ceVariable* variables;
     unsigned int variableAmount;
     char** variableNames;
     bytecode* programHistory;
     unsigned int programHistoryLength;
-    void** stack;
-    void** heap;
+    stack_queue queue;
+    stack_queue stack;
 }CEVM;
+
+char* ceTypesReadable(ceTypes Type){
+    switch(Type){
+        case TYPE_INT:
+            return "int";
+            break;
+        case TYPE_STR:
+            return "str";
+            break;
+        case TYPE_ARR:
+            return "array";
+            break;
+        case TYPE_NULL:
+            return "NULL";
+            break;
+        default:
+            return "invalid";
+    }
+};
+
+// stack stuff
+stack_queue stackPush(stack_queue Stack, void* Elm){
+    printf("1");
+    void** Temp_Stack_Data = (void**)realloc(Stack.data, sizeof(void*)*(Stack.len+1));
+    printf("2");
+    return Stack;
+    if(Temp_Stack_Data==NULL){
+        fprintf(stderr, "Critical Memory Error during PUSH opperator\n");
+        return Stack;
+    }
+    printf("3");
+    Temp_Stack_Data[Stack.len] = Elm;
+    printf("4");
+    Stack.data = Temp_Stack_Data;
+    printf("5");
+    //printf("stack contains: %d\n", (int)Stack.data[Stack.len]);
+    printf("6");
+    Stack.len++;
+    printf("7");
+    return Stack;
+}
 
 // bytecode specific things;
 bytecode createBytecode(instruction Opcode, int Operant_Amount, void** Operants, bcTypes* Types){
@@ -67,7 +111,17 @@ bytecode createBytecode(instruction Opcode, int Operant_Amount, void** Operants,
     New_Code.opcode = Opcode;
     New_Code.operantAmount = Operant_Amount;
     New_Code.operants = Operants;
-    New_Code.types = Types;
+    New_Code.operants = (void**)malloc(sizeof(void*)*Operant_Amount);
+    for(int i=0; i<Operant_Amount; i++){
+        New_Code.operants[i] = (void*)malloc(sizeof(ceVariable));
+        New_Code.operants[i] = Operants[i];
+    }
+    New_Code.types = (bcTypes*)malloc(sizeof(bcTypes)*Operant_Amount);
+    *New_Code.types = *Types;
+    free(Operants);
+    free(Types);
+    printf("types: %d\n", New_Code.types[0]);
+    printf("value: %d\n", (int)New_Code.operants[0]);
     return New_Code;
 }
 
@@ -78,6 +132,12 @@ CEVM bootVM(void){
     VM.variableNames = (char**)malloc(sizeof(char*));
     VM.variableAmount = 0;
     VM.programHistory = (bytecode*)malloc(sizeof(bytecode));
+    stack_queue Stack;
+    Stack.data = (void**)malloc(sizeof(void*));
+    Stack.len = 0;
+    stack_queue Queue;
+    Queue.data = (void**)malloc(sizeof(void*));
+    Queue.len = 0;
     return VM;
 }
 
@@ -116,6 +176,86 @@ CEVM appendInstruction(CEVM VM, instruction Instruction, int Operant_Amount, voi
     VM.programHistory[VM.programHistoryLength] = New_Code;
     return VM;
 }
+
+CEVM appendBytecode(CEVM VM, bytecode Bytecode){
+    printf("performing ");
+    /*switch(Bytecode.opcode){
+        case PRINT_VAR:
+            printf("\"print\" ");
+            break;
+        case STORE:
+            printf("\"store\" ");
+            break;
+        case LOAD:
+            printf("\"load\" ");
+            break;
+        case PUSH:
+            printf("\"push\" ");
+            break;
+        case JMP:
+            printf("\"jump\" ");
+            break;
+        case JMP_GT:
+            printf("\"jump if greater than\" ");
+            break;
+        case JMP_LT:
+            printf("\"jump if less than\" ");
+            break;
+        case BLOCK_START:
+            printf("\"block start\" ");
+            break;
+        case BLOCK_END:
+            printf("\"block end\" ");
+            break;
+        case ADD:
+            printf("addition ");
+            break;
+        case SUB:
+            printf("subtraction ");
+            break;
+        case MUL:
+            printf("multiplicattion ");
+            break;
+        case DIV:
+            printf("division ");
+            break; 
+    }
+    printf("on");
+    printf(" ");
+    for(int i=0; i<Bytecode.operantAmount;i++){
+        switch(Bytecode.types[i]){
+            case BC_TYPE_INT:
+                printf("%d", (int)Bytecode.operants[i]);
+                break;
+            case BC_TYPE_STR:
+                printf("%s", (char*)Bytecode.operants[i]);
+                break;
+            case BC_TYPE_ARR:
+                printf("NJI\n");
+                break;
+            case BC_TYPE_NULL:
+                printf("NULL");
+                break;
+            case BC_TYPE_VAR:
+                ceVariable Test = *(ceVariable*)(Bytecode.operants[i]);
+                break;
+                //printf("(%s)", (ceVariable*)(*Bytecode.operants[i])->name);
+                //break;
+        }
+        printf(", ");
+    };
+    printf("\n");*/
+    bytecode* Temp_ProgramHistory = realloc(VM.programHistory, sizeof(bytecode)*(VM.programHistoryLength+1));
+    if(Temp_ProgramHistory==NULL){
+        fprintf(stderr, "Critical memory Error during bytecode storing\n");
+        return VM;
+    }
+    Temp_ProgramHistory[VM.programHistoryLength] = Bytecode;
+    *VM.programHistory = *Temp_ProgramHistory;
+    free(Temp_ProgramHistory);
+    return VM;
+}
+
 CEVM executeInstruction(CEVM VM, bytecode Bytecode){
     switch(Bytecode.opcode){
         case PRINT_VAR:

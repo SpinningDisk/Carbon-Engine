@@ -38,12 +38,12 @@ void nameError(char* Name){
 %%
 input:
     | input line
-    | EXIT      {printf("bye!\n"); return 0;}
+    | input EXIT      {printf("bye!\n"); return 0;}
     | error     {printf("\n"); return 0;}
 ;
 
 line:
-    expression '\n' {printf("= %d\n>>", $1);}
+    expression '\n' {printf("%d\n>>", $1);}
     | assignment '\n' {printf(">>");}
     | IDENT '\n'    {
         int var_Index = return_Index($1, VM.variableNames, VM.variableAmount);
@@ -64,7 +64,7 @@ line:
                 fprintf(stderr, "NJI\n");
         }
     }
-    | loop      {printf("test\n>>");}
+    | loop '\n'      {printf("test\n>>");}
 ;
 
 assignment:
@@ -114,7 +114,7 @@ value:
 ;
 
 loop:
-    | WHILE PARENT_L condition PARENT_R     {printf("");}
+    | WHILE PARENT_L condition PARENT_R '{'     {printf("");}
 ;
 
 condition:
@@ -147,7 +147,7 @@ condition:
     }
 
 expression:
-    expression PLUS expression {$$=$1+$3;}
+    expression PLUS expression {$$=$1+$3;bytecode New_Code;New_Code.opcode=ADD;New_Code.operantAmount=2;}
     | expression MINUS expression {$$ = $1 - $3; }
     | term  { $$ = $1; }
 ;
@@ -166,8 +166,11 @@ term:
 ;
 factor:
     NUMBER              { 
-
-        bytecode New_Code = createBytecode(PUSH, 1, (void**)$1, BC_TYPE_INT);
+        // store in stack so that we can apply shanting yard later in input;
+        void* NumberPtr = (void*)$1;
+        VM.queue = stackPush(VM.queue, NumberPtr);
+        printf("");
+        
     }
     | IDENT             { 
         int var_Index = return_Index($1, VM.variableNames, VM.variableAmount);

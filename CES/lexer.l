@@ -5,7 +5,7 @@
     
 %%
 \n  {return '\n';}
-exit\(\)                {return EXIT;}
+" "?"exit\(\)"" "?                {return EXIT;}
 while                   {return WHILE;}
 
 
