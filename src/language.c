@@ -85,23 +85,18 @@ char* ceTypesReadable(ceTypes Type){
 
 // stack stuff
 stack_queue stackPush(stack_queue Stack, void* Elm){
-    printf("1");
-    void** Temp_Stack_Data = (void**)realloc(Stack.data, sizeof(void*)*(Stack.len+1));
-    printf("2");
-    return Stack;
+    void** Temp_Stack_Data = malloc(sizeof(void*)*(Stack.len+1));
+    for(int i=0; i<Stack.len;i++){
+        Temp_Stack_Data[i] = Stack.data[i];
+    }           // for some reason, realloc crashes here, so we sadly copy manually
     if(Temp_Stack_Data==NULL){
         fprintf(stderr, "Critical Memory Error during PUSH opperator\n");
         return Stack;
     }
-    printf("3");
     Temp_Stack_Data[Stack.len] = Elm;
-    printf("4");
     Stack.data = Temp_Stack_Data;
-    printf("5");
     //printf("stack contains: %d\n", (int)Stack.data[Stack.len]);
-    printf("6");
     Stack.len++;
-    printf("7");
     return Stack;
 }
 

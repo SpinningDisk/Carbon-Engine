@@ -23,7 +23,7 @@ void nameError(char* Name){
 }
     
 %token <num> NUMBER
-%token <str> PLUS MINUS MULTIPLY DIVIDE EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE
+%token <str> PLUS MINUS MULTIPLY DIVIDE EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE printstack
 %token <type> lTYPE
 
 %type <null> assignment
@@ -39,6 +39,9 @@ void nameError(char* Name){
 input:
     | input line
     | input EXIT      {printf("bye!\n"); return 0;}
+    | input printstack    {for(int i=0; i<VM.queue.len; i++){
+        printf("stack elm %d = %d\n", i, (int)VM.queue.data[i]);
+    }}
     | error     {printf("\n"); return 0;}
 ;
 
@@ -169,7 +172,7 @@ factor:
         // store in stack so that we can apply shanting yard later in input;
         void* NumberPtr = (void*)$1;
         VM.queue = stackPush(VM.queue, NumberPtr);
-        printf("");
+        printf("VM: added %d to restult stack\n", (int)VM.queue.data[VM.queue.len-1]);
         
     }
     | IDENT             { 
