@@ -171,7 +171,7 @@ factor:
     NUMBER              { 
         // store in stack so that we can apply shanting yard later in input;
         void* NumberPtr = (void*)$1;
-        VM.queue = stackPush(VM.queue, NumberPtr);
+        VM.queue = stackPush_Enqueue(VM.queue, NumberPtr);
         printf("VM: added %d to restult stack\n", (int)VM.queue.data[VM.queue.len-1]);
         
     }

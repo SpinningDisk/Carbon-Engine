@@ -84,7 +84,7 @@ char* ceTypesReadable(ceTypes Type){
 };
 
 // stack stuff
-stack_queue stackPush(stack_queue Stack, void* Elm){
+stack_queue stackPush_Enqueue(stack_queue Stack, void* Elm){
     void** Temp_Stack_Data = malloc(sizeof(void*)*(Stack.len+1));
     for(int i=0; i<Stack.len;i++){
         Temp_Stack_Data[i] = Stack.data[i];
