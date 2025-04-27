@@ -68,7 +68,9 @@ typedef struct{
 char* ceTypesReadable(ceTypes Type);
 
 
-stack_queue stackPush(stack_queue Stack, void* Elm);
+stack_queue stackPush_Enqueue(stack_queue Stack, void* Elm);
+void* stackPop(stack_queue* Stack);
+void* stackPeek(stack_queue* Stack);
 
 bytecode createBytecode(instruction Opcode, int operant_Amount, void** Operants, bcTypes* Types);
 

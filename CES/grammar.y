@@ -9,9 +9,12 @@
 int yylex(void);
 int yyerror(char* s);
 extern CEVM VM;
-
+char* scope = "Global";
 void nameError(char* Name){
-    fprintf(stderr, "IdentifierError: %s not defined in current Scope", Name);
+    fprintf(stderr, "\e[1;31mIdentifierError: %s not defined in current Scope: \e[1;36m%s\e[0;37m", Name, scope);
+}
+void zeroDivisionError(){
+    fprintf(stderr, "\e[1;31mZeroDivisionErro: Cannot divide through Zero\e[0;37m\n");
 }
 %}
     
@@ -23,7 +26,7 @@ void nameError(char* Name){
 }
     
 %token <num> NUMBER
-%token <str> PLUS MINUS MULTIPLY DIVIDE EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE printstack
+%token <str> PLUS MINUS MULTIPLY DIVIDE EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE printstack printqueue emptystack emptyqueue
 %token <type> lTYPE
 
 %type <null> assignment
@@ -39,15 +42,26 @@ void nameError(char* Name){
 input:
     | input line
     | input EXIT      {printf("bye!\n"); return 0;}
-    | input printstack    {for(int i=0; i<VM.queue.len; i++){
-        printf("stack elm %d = %d\n", i, (int)VM.queue.data[i]);
+    | input printstack    {for(int i=0; i<VM.stack.len; i++){
+        printf("stack elm %d = %d = %s\n", i, (int)VM.stack.data[i], (char*)VM.stack.data[i]);
     }}
-    | error     {printf("\n"); return 0;}
+    | input printqueue  {for(int i=0; i<VM.queue.len; i++){
+        printf("queue elm %d = %d\n", i, (int)VM.queue.data[i]);
+    }}
+    | input emptystack  {
+        VM.stack.data = (void**)malloc(sizeof(void*));
+        VM.stack.len = 0;
+    }
+    | input emptyqueue  {
+        VM.queue.data = (void**)malloc(sizeof(void*));
+        VM.queue.len = 0;
+    }
+    | error     {printf("\n\e[1;34m>>\e[0;37m"); yyerrok;}
 ;
 
 line:
-    expression '\n' {printf("%d\n>>", $1);}
-    | assignment '\n' {printf(">>");}
+    expression '\n' {printf("%d\n\e[1;34m>>\e[0;37m", $1);}
+    | assignment '\n' {printf("\e[1;34m>>\e[0;37m");}
     | IDENT '\n'    {
         int var_Index = return_Index($1, VM.variableNames, VM.variableAmount);
         switch(var_Index){
@@ -58,16 +72,16 @@ line:
         }
         switch(VM.variables[var_Index].type){
             case TYPE_INT:
-                printf("%d\n>>", (int)VM.variables[var_Index].data);
+                printf("%d\n\e[1;34m>>\e[0;37m", (int)VM.variables[var_Index].data);
                 break;
             case TYPE_STR:
-                printf("%s\n>>", (char*)VM.variables[var_Index].data);
+                printf("%s\n\e[1;34m>>\e[0;37m", (char*)VM.variables[var_Index].data);
                 break;
             default:
                 fprintf(stderr, "NJI\n");
         }
     }
-    | loop '\n'      {printf("test\n>>");}
+    | loop '\n'      {printf("\n\e[1;34m>>\e[0;37m");}
 ;
 
 assignment:
@@ -150,18 +164,58 @@ condition:
     }
 
 expression:
-    expression PLUS expression {$$=$1+$3;bytecode New_Code;New_Code.opcode=ADD;New_Code.operantAmount=2;}
-    | expression MINUS expression {$$ = $1 - $3; }
+    expression PLUS expression {$$=$1+$3; 
+        instruction Opcode = ADD;
+        switch(VM.stack.len){
+            case 0:
+                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+                printf("stack empty\n");
+                break;
+            default:
+            printf("got opcode of higher priority; poping stack\n");    
+            if(stackPeek(&VM.stack)>Opcode+1){  // +1 here so we get from sub, which is MUL and DIV
+                    for(int i=0;i<VM.stack.len-1;i++){
+                        void* NextOpcode = stackPop(&VM.stack);
+                        printf("received code: %d; ", (int)NextOpcode);
+                        VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
+                    }
+                }
+                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+        }
+    }
+        
+    | expression MINUS expression {$$ = $1 - $3;
+        instruction Opcode = SUB;
+        switch(VM.stack.len){
+            case 0:
+                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+                printf("stack empty\n");
+                break;
+            default:
+                if(stackPeek(&VM.stack)>Opcode){
+                    printf("got opcode of higher priority; poping stack\n");
+                    for(int i=0;i<VM.stack.len-1;i++){
+                        void* NextOpcode = stackPop(&VM.stack);
+                        VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
+                    }
+                }
+                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+        }}
     | term  { $$ = $1; }
 ;
 
 term:
-    term MULTIPLY term { $$ = $1 * $3; }
+    term MULTIPLY term { $$ = $1 * $3;
+        instruction Opcode = MUL;
+        VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+        printf("added mul\n");}
     | term DIVIDE term {
         if($3==0){
-            fprintf(stderr, "Zero Divison Error!\n");
+            zeroDivisionError();
             $$ = 0;
         }else{
+            instruction Opcode = DIV;
+            VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
             $$ = $1/$3;
         }
     }
@@ -171,9 +225,7 @@ factor:
     NUMBER              { 
         // store in stack so that we can apply shanting yard later in input;
         void* NumberPtr = (void*)$1;
-        VM.queue = stackPush_Enqueue(VM.queue, NumberPtr);
-        printf("VM: added %d to restult stack\n", (int)VM.queue.data[VM.queue.len-1]);
-        
+        VM.queue = stackPush_Enqueue(VM.queue, NumberPtr);        
     }
     | IDENT             { 
         int var_Index = return_Index($1, VM.variableNames, VM.variableAmount);
@@ -187,10 +239,25 @@ factor:
         }else{
             fprintf(stderr, "TypeError: cannot perform arithmetics with object of type %s\n", ceTypesReadable(VM.variables[var_Index].type));
         }
+        
     }
-    | PARENT_L expression PARENT_R  { $$ = $2; }
-;    
-
+    | PARENT_L expression PARENT_R  {$$ = $2;}
+; 
+    // printf("got parrent R\n");
+    // char* Opcode = ")";
+    // int Found_Matching_Parent = 0;
+    // int counter = 0;
+    // return PARENT_R;
+    // void* Opperator = stackPop(&VM.stack);
+    // while(1){
+    //     printf("got %s, not at len of %d\n", (char*)Opperator, VM.queue.len);
+    //     VM.queue = stackPush_Enqueue(VM.queue, Opperator);
+    //     if(counter==VM.stack.len){
+    //         Found_Matching_Parent = 1;
+    //     }
+    // }
+    // VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+    // return PARENT_R;
 %%
   
 int yyerror(char *s) {

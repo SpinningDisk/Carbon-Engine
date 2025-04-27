@@ -99,6 +99,21 @@ stack_queue stackPush_Enqueue(stack_queue Stack, void* Elm){
     Stack.len++;
     return Stack;
 }
+void* stackPop(stack_queue* Stack){
+    void* Item = Stack->data[Stack->len-1];
+    void** Temp_Stack_Data = realloc(Stack->data, sizeof(void*)*(Stack->len-1));
+    if(Temp_Stack_Data==NULL){
+        fprintf(stderr, "Critical Memory Error during POP opperator\n");
+        return Item;
+    };
+    Stack->data = Temp_Stack_Data;
+    Stack->len--;
+    return Item;
+}
+void* stackPeek(stack_queue* Stack){
+    void* Item = Stack->data[Stack->len-1];
+    return Item;
+}
 
 // bytecode specific things;
 bytecode createBytecode(instruction Opcode, int Operant_Amount, void** Operants, bcTypes* Types){
