@@ -42,9 +42,12 @@ void zeroDivisionError(){
 input:
     | input line
     | input EXIT      {printf("bye!\n"); return 0;}
-    | input printstack    {for(int i=0; i<VM.stack.len; i++){
-        printf("stack elm %d = %d = %s\n", i, (int)VM.stack.data[i], (char*)VM.stack.data[i]);
-    }}
+    | input printstack    {
+        printf("got len %d\n", VM.stack.len);
+        for(int i=0; i<VM.stack.len; i++){
+            printf("stack elm %d = %d = %s\n", i, (int)VM.stack.data[i], instructionsReadable((instruction)VM.stack.data[i]));
+        }
+    }
     | input printqueue  {for(int i=0; i<VM.queue.len; i++){
         printf("queue elm %d = %d\n", i, (int)VM.queue.data[i]);
     }}
@@ -60,7 +63,12 @@ input:
 ;
 
 line:
-    expression '\n' {printf("%d\n\e[1;34m>>\e[0;37m", $1);}
+    expression '\n' {printf("%d\n\e[1;34m>>\e[0;37m", $1);
+        for(int i=0; i<VM.stack.len;i++){
+            VM.queue = stackPush_Enqueue(VM.queue, VM.stack.data[i]);
+        }
+        
+    }
     | assignment '\n' {printf("\e[1;34m>>\e[0;37m");}
     | IDENT '\n'    {
         int var_Index = return_Index($1, VM.variableNames, VM.variableAmount);
@@ -162,53 +170,74 @@ condition:
             $$ = 0;
         }
     }
+;
+// memo to me: I think I just understood why we need to shunting yard/RP: 
+// pop two elements of the stack (numbers/idents which can be retrieved)
+// pop next element (Operator), and apply opperator to freshly popped elms, and push res to stack
+// now we should have new two elms
+// no: need to loop until opperator, and take however many elms opperator requires and apply that
+// to the last n popped elms, then push; now rince and repeate above
 
+// todo: get term and thus factor into expression
 expression:
     expression PLUS expression {$$=$1+$3; 
         instruction Opcode = ADD;
+        printf("ADD operator start: \n");
         switch(VM.stack.len){
             case 0:
                 VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
                 printf("stack empty\n");
                 break;
             default:
-            printf("got opcode of higher priority; poping stack\n");    
             if(stackPeek(&VM.stack)>Opcode+1){  // +1 here so we get from sub, which is MUL and DIV
-                    for(int i=0;i<VM.stack.len-1;i++){
-                        void* NextOpcode = stackPop(&VM.stack);
-                        printf("received code: %d; ", (int)NextOpcode);
-                        VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
-                    }
+                printf("got opcode of higher priority (%d); poping stack of len %d\n", stackPeek(&VM.stack), VM.stack.len);    
+                for(int i=0;i<VM.stack.len;i++){
+                    void* NextOpcode = stackPop(&VM.stack);
+                    printf("received code: %d;\n ", (int)NextOpcode);
+                    VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
                 }
-                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+                for(int i=0; i<VM.stack.len; i++){
+                    printf("\tstack elm %d = %d = %s\n", i, (int)VM.stack.data[i], instructionsReadable((instruction)VM.stack.data[i]));
+                }
+            }
+            VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
         }
+        printf("ADD operator end;\n");
     }
         
     | expression MINUS expression {$$ = $1 - $3;
         instruction Opcode = SUB;
+        printf("SUB operator start: \n");
         switch(VM.stack.len){
             case 0:
                 VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
                 printf("stack empty\n");
                 break;
             default:
-                if(stackPeek(&VM.stack)>Opcode){
-                    printf("got opcode of higher priority; poping stack\n");
-                    for(int i=0;i<VM.stack.len-1;i++){
-                        void* NextOpcode = stackPop(&VM.stack);
-                        VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
-                    }
+            if(stackPeek(&VM.stack)>Opcode){  // +1 here so we get from sub, which is MUL and DIV
+                printf("got opcode of higher priority (%d); poping stack of len %d\n", stackPeek(&VM.stack), VM.stack.len);    
+                for(int i=0;i<VM.stack.len;i++){
+                    void* NextOpcode = stackPop(&VM.stack);
+                    printf("received code: %d;\n ", (int)NextOpcode);
+                    VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
                 }
-                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
-        }}
+                for(int i=0; i<VM.stack.len; i++){
+                    printf("\tstack elm %d = %d = %s\n", i, (int)VM.stack.data[i], instructionsReadable((instruction)VM.stack.data[i]));
+                }
+            }
+            VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+        }
+        printf("SUB end;\n");
+    }
     | term  { $$ = $1; }
 ;
 
 term:
     term MULTIPLY term { $$ = $1 * $3;
         instruction Opcode = MUL;
+        printf("MUL opperator start: \n");
         VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
-        printf("added mul\n");}
+        printf("MUL opperator end;\n");}
     | term DIVIDE term {
         if($3==0){
             zeroDivisionError();
@@ -223,7 +252,7 @@ term:
 ;
 factor:
     NUMBER              { 
-        // store in stack so that we can apply shanting yard later in input;
+        // store in stack so that we can apply shanting yard later in input/line;
         void* NumberPtr = (void*)$1;
         VM.queue = stackPush_Enqueue(VM.queue, NumberPtr);        
     }

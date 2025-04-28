@@ -65,6 +65,8 @@ typedef struct{
     // which means here queue has priority, and as such CAN assign 
     // and realloc, but this one cannot
 }CEVM;
+
+char* instructionsReadable(instruction Instruction);
 char* ceTypesReadable(ceTypes Type);
 
 

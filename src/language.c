@@ -64,6 +64,52 @@ typedef struct{
     stack_queue stack;
 }CEVM;
 
+char* instructionsReadable(instruction Instruction){
+    switch(Instruction){
+        case 0:
+            return "PRINT_VAR";
+            break;
+        case 1:
+            return "STORE";
+            break;
+        case 2:
+            return "LOAD";
+            break;
+        case 3:
+            return "PUSH";
+            break;
+        case 4:
+            return "JMP";
+            break;
+        case 5:
+            return "JMP_GT";
+            break;
+        case 6:
+            return "JMP_LT";
+            break;
+        case 7:
+            return "BLOCK_START";
+            break;
+        case 8:
+            return "BLOCK_END";
+            break;
+        case 9:
+            return "ADD";
+            break;
+        case 10:
+            return "SUB";
+            break;
+        case 11:
+            return "MUL";
+            break;
+        case 12:
+            return "DIV";
+            break;
+        default:
+            return "NOT KNOWN";
+            break;
+    }
+}
 char* ceTypesReadable(ceTypes Type){
     switch(Type){
         case TYPE_INT:
@@ -101,11 +147,19 @@ stack_queue stackPush_Enqueue(stack_queue Stack, void* Elm){
 }
 void* stackPop(stack_queue* Stack){
     void* Item = Stack->data[Stack->len-1];
+    printf("got %d\n", (int)Item);
     void** Temp_Stack_Data = realloc(Stack->data, sizeof(void*)*(Stack->len-1));
-    if(Temp_Stack_Data==NULL){
-        fprintf(stderr, "Critical Memory Error during POP opperator\n");
-        return Item;
-    };
+    switch(Stack->len){
+        case 1:
+            break;
+        default:
+            if(Temp_Stack_Data==NULL){
+            fprintf(stderr, "Critical Memory Error during POP opperator\n");
+            return Item;
+            };
+            break;
+        
+    }
     Stack->data = Temp_Stack_Data;
     Stack->len--;
     return Item;

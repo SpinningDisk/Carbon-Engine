@@ -15,8 +15,8 @@ int main(){
     // VM.stack = stackPush_Enqueue(VM.stack, (void*)peter);
     // printf("from len of %d", VM.stack.len);
     // void* test = stackPop(&VM.stack);
-    // printf(" to %d by retrieving %d (now top is %d)\n", VM.stack.len, (int)test, (int)VM.stack.data[0]);
-    // return 0;
+    // void* test2 = stackPop(&VM.stack);
+    // printf(" to %d by retrieving %d and %d\n", VM.stack.len, (int)test, (int)test2);
     // return 0;
     printf("\n\e[1;34m>>\e[0;37m");
     yyparse();
