@@ -33,6 +33,7 @@ void zeroDivisionError(){
 %type <str> value
 %type <num> condition
 %type <num> expression
+%type <num> open_expression
 %type <num> term
 %type <num> factor
 %type <str> error
@@ -63,10 +64,12 @@ input:
 ;
 
 line:
-    expression '\n' {printf("hans\n\e[1;34m>>\e[0;37m");
-        /*for(int i=0; i<VM.stack.len;i++){
-            VM.queue = stackPush_Enqueue(VM.queue, VM.stack.data[i]);
-        }*/        
+    expression '\n' {printf("\n\e[1;34m>>\e[0;37m");
+        printf("\nline: jmpd\n");
+        while(VM.stack.len>0){
+            printf("line: moved %s\n", instructionsReadable((instruction)stackPeek(&VM.stack)));
+            VM.queue = stackPush_Enqueue(VM.queue, stackPop(&VM.stack));
+        }
     }
     | assignment '\n' {printf("\e[1;34m>>\e[0;37m");}
     | IDENT '\n'    {
@@ -178,10 +181,42 @@ condition:
 // to the last n popped elms, then push; now rince and repeate above
 
 // todo: get term and thus factor into expression
+
 expression:
     expression OPPER expression {
-        if
-        printf("got opperant %s\n", $2);
+        instruction Opperator;
+        if($2[0]=='+'){
+            Opperator = ADD;
+        }else if($2[0]=='-'){
+            Opperator = SUB;
+        }else if($2[0]=='*'){
+            Opperator = MUL;
+        }else if($2[0]=='/'){
+            Opperator = DIV;
+        }
+        switch(VM.stack.len){
+            case 0:
+                break;
+            default:
+                switch(Opperator){
+                    case ADD:
+                        if(stackPeek(&VM.stack)>Opperator+1){     // +1 so we start at sub and go up (mul, div, etc.)
+                            printf("open: got higher priority (%s > %s)\n", instructionsReadable((instruction)stackPeek(&VM.stack)), instructionsReadable(Opperator));
+                            for(int i=0; i<VM.stack.len; i++){
+                                void* Top_Opperator = stackPop(&VM.stack);
+                                printf("\tgot %s\n", instructionsReadable((instruction)Top_Opperator));
+                                VM.queue = stackPush_Enqueue(VM.queue, Top_Opperator);
+                            }
+                        }
+                }
+                printf("open: adding %s\n", instructionsReadable(Opperator));
+
+        }
+        bytecode New;
+        New.instruction = Opperator;
+        New.operantAmount = 2;
+        New.
+        VM.stack = stackPush_Enqueue(VM.stack, (void*)Opperator);
     }
     | PARENT_L                  {
         printf("got left parent\n");
@@ -190,9 +225,8 @@ expression:
         printf("got right parent\n");
     }
     | factor                    {
-        printf("got factor %d\n", $1);
     }
-
+;
 /*
 expression:
     expression PLUS expression {$$=$1+$3; 

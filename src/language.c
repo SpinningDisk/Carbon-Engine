@@ -147,7 +147,6 @@ stack_queue stackPush_Enqueue(stack_queue Stack, void* Elm){
 }
 void* stackPop(stack_queue* Stack){
     void* Item = Stack->data[Stack->len-1];
-    printf("got %d\n", (int)Item);
     void** Temp_Stack_Data = realloc(Stack->data, sizeof(void*)*(Stack->len-1));
     switch(Stack->len){
         case 1:
