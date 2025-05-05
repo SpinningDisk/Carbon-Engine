@@ -26,7 +26,7 @@ void zeroDivisionError(){
 }
     
 %token <num> NUMBER
-%token <str> PLUS MINUS MULTIPLY DIVIDE EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE printstack printqueue emptystack emptyqueue
+%token <str> OPPER EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE printstack printqueue emptystack emptyqueue
 %token <type> lTYPE
 
 %type <null> assignment
@@ -63,11 +63,10 @@ input:
 ;
 
 line:
-    expression '\n' {printf("%d\n\e[1;34m>>\e[0;37m", $1);
-        for(int i=0; i<VM.stack.len;i++){
+    expression '\n' {printf("hans\n\e[1;34m>>\e[0;37m");
+        /*for(int i=0; i<VM.stack.len;i++){
             VM.queue = stackPush_Enqueue(VM.queue, VM.stack.data[i]);
-        }
-        
+        }*/        
     }
     | assignment '\n' {printf("\e[1;34m>>\e[0;37m");}
     | IDENT '\n'    {
@@ -180,6 +179,22 @@ condition:
 
 // todo: get term and thus factor into expression
 expression:
+    expression OPPER expression {
+        if
+        printf("got opperant %s\n", $2);
+    }
+    | PARENT_L                  {
+        printf("got left parent\n");
+    }
+    | PARENT_R                  {
+        printf("got right parent\n");
+    }
+    | factor                    {
+        printf("got factor %d\n", $1);
+    }
+
+/*
+expression:
     expression PLUS expression {$$=$1+$3; 
         instruction Opcode = ADD;
         printf("ADD operator start: \n");
@@ -229,16 +244,12 @@ expression:
         }
         printf("SUB end;\n");
     }
-    | term  { $$ = $1; }
-;
-
-term:
-    term MULTIPLY term { $$ = $1 * $3;
+    | expression MULTIPLY expression { $$ = $1 * $3;
         instruction Opcode = MUL;
         printf("MUL opperator start: \n");
         VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
         printf("MUL opperator end;\n");}
-    | term DIVIDE term {
+    | expression DIVIDE expression {
         if($3==0){
             zeroDivisionError();
             $$ = 0;
@@ -249,7 +260,7 @@ term:
         }
     }
     | factor
-;
+;*/
 factor:
     NUMBER              { 
         // store in stack so that we can apply shanting yard later in input/line;

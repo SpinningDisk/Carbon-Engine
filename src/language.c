@@ -321,7 +321,7 @@ CEVM appendBytecode(CEVM VM, bytecode Bytecode){
 }
 
 CEVM executeInstruction(CEVM VM, bytecode Bytecode){
-    switch(Bytecode.opcode){
+    /*switch(Bytecode.opcode){
         case PRINT_VAR:
             printf("printing something...\n");
             break;
@@ -339,7 +339,7 @@ CEVM executeInstruction(CEVM VM, bytecode Bytecode){
                     fprintf(stderr, "Error: Fatal Internal Error: Bytecode ASSIGN contains too many operants\n");
                     return VM;
             }
-    }
+    }*/
     return VM;
 }
 

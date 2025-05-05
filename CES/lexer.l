@@ -15,10 +15,10 @@ emptystack\(\)          {return emptystack;}
 emptyqueue\(\)          {return emptyqueue;}
 
 [0-9]+          { yylval.num = atoi(yytext); return NUMBER; }
-" "?"+"" "?             { return PLUS; }
-" "?"-"" "?             { return MINUS; }
-" "?"*"" "?             { return MULTIPLY; }
-" "?"/"" "?             { return DIVIDE; }
+" "?"+"" "?             { yylval.str = strdup(yytext); return OPPER; }
+" "?"-"" "?             { yylval.str = strdup(yytext); return OPPER; }
+" "?"*"" "?             { yylval.str = strdup(yytext); return OPPER; }
+" "?"/"" "?             { yylval.str = strdup(yytext); return OPPER; }
 " "?"="" "?             { return EQ; }
 " "?"("" "?             { return PARENT_L;}
 " "?")"" "?             { 
