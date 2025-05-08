@@ -33,6 +33,7 @@ typedef enum{
 }ceTypes;
 typedef enum{
     BC_TYPE_INT,
+    BC_Type_UINT,
     BC_TYPE_STR,
     BC_TYPE_ARR,
     BC_TYPE_NULL,
@@ -55,13 +56,23 @@ typedef struct{
     unsigned int len;
 }stack_queue;
 typedef struct{
+    bcTypes type;
+    union{
+        int _int;
+        unsigned int _uint;
+        char* _str;
+        void** _arr;
+        ceVariable _var;
+    };
+}cevmRegister;
+typedef struct{
     ceVariable* variables;
     unsigned int variableAmount;
     char** variableNames;
     bytecode* programHistory;
     unsigned int programHistoryLength;
-    stack_queue queue;
-    stack_queue stack;
+    stack_queue* queues;
+    stack_queue* stacks;
 }CEVM;
 
 char* instructionsReadable(instruction Instruction){
@@ -172,9 +183,8 @@ void* stackPeek(stack_queue* Stack){
 bytecode createBytecode(instruction Opcode, int Operant_Amount, void** Operants, bcTypes* Types){
     bytecode New_Code;
     New_Code.opcode = Opcode;
-    New_Code.operantAmount = Operant_Amount;
-    New_Code.operants = Operants;
     New_Code.operants = (void**)malloc(sizeof(void*)*Operant_Amount);
+    *New_Code.operants = *Operants;
     for(int i=0; i<Operant_Amount; i++){
         New_Code.operants[i] = (void*)malloc(sizeof(ceVariable));
         New_Code.operants[i] = Operants[i];

@@ -21,14 +21,18 @@ void zeroDivisionError(){
 %union {
     int num;
     char* str;
+    char* arrStr[];
     int null;
     int type;
+    short short noReturn;
 }
     
 %token <num> NUMBER
 %token <str> OPPER EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE printstack printqueue emptystack emptyqueue
 %token <type> lTYPE
+%token <noReturn> SYSTEM
 
+%type <arrStr> system_setting_args
 %type <null> assignment
 %type <str> value
 %type <num> condition
@@ -37,6 +41,7 @@ void zeroDivisionError(){
 %type <num> term
 %type <num> factor
 %type <str> error
+%type <noReturn> system_setting
 
 
 %%
@@ -44,54 +49,71 @@ input:
     | input line
     | input EXIT      {printf("bye!\n"); return 0;}
     | input printstack    {
-        printf("got len %d\n", VM.stack.len);
-        for(int i=0; i<VM.stack.len; i++){
-            printf("stack elm %d = %d = %s\n", i, (int)VM.stack.data[i], instructionsReadable((instruction)VM.stack.data[i]));
+        printf("got len %d\n", VM.stacks[0].len);
+        for(int i=0; i<VM.stacks[0].len; i++){
+            printf("stack elm %d = %d = %s\n", i, (int)VM.stacks[0].data[i], instructionsReadable((instruction)VM.stacks[0].data[i]));
         }
     }
-    | input printqueue  {for(int i=0; i<VM.queue.len; i++){
-        printf("queue elm %d = %d\n", i, (int)VM.queue.data[i]);
+    | input printqueue  {for(int i=0; i<VM.queues[0].len; i++){
+        printf("queue elm %d = %d\n", i, (int)VM.queues[0].data[i]);
     }}
     | input emptystack  {
-        VM.stack.data = (void**)malloc(sizeof(void*));
-        VM.stack.len = 0;
+        VM.stacks[0].data = (void**)malloc(sizeof(void*));
+        VM.stacks[0].len = 0;
     }
     | input emptyqueue  {
-        VM.queue.data = (void**)malloc(sizeof(void*));
-        VM.queue.len = 0;
+        VM.queues[0].data = (void**)malloc(sizeof(void*));
+        VM.queues[0].len = 0;
     }
-    | error     {printf("\n\e[1;34m>>\e[0;37m"); yyerrok;}
+    | error     {printf("\n\e[1;34m>>\e[0;37m");}
 ;
 
 line:
     expression '\n' {printf("\n\e[1;34m>>\e[0;37m");
         printf("\nline: jmpd\n");
-        while(VM.stack.len>0){
-            printf("line: moved %s\n", instructionsReadable((instruction)stackPeek(&VM.stack)));
-            VM.queue = stackPush_Enqueue(VM.queue, stackPop(&VM.stack));
+        while(VM.stacks[0].len>0){
+            printf("line: moved %s\n", instructionsReadable((instruction)stackPeek(&VM.stacks[0])));
+            VM.queues[0] = stackPush_Enqueue(VM.queues[0], stackPop(&VM.stacks[0]));
         }
     }
     | assignment '\n' {printf("\e[1;34m>>\e[0;37m");}
+    | system_setting '\n' {printf("\e[1;34m>>\e[0;37m");}
     | IDENT '\n'    {
         int var_Index = return_Index($1, VM.variableNames, VM.variableAmount);
         switch(var_Index){
             case -1:
-                nameError($1);
-                YYERROR;
-                break;
-        }
-        switch(VM.variables[var_Index].type){
-            case TYPE_INT:
-                printf("%d\n\e[1;34m>>\e[0;37m", (int)VM.variables[var_Index].data);
-                break;
-            case TYPE_STR:
-                printf("%s\n\e[1;34m>>\e[0;37m", (char*)VM.variables[var_Index].data);
-                break;
-            default:
-                fprintf(stderr, "NJI\n");
-        }
-    }
+                 nameError($1);
+                 YYERROR;
+                 break;
+         }
+         switch(VM.variables[var_Index].type){
+             case TYPE_INT:
+                 printf("%d\n\e[1;34m>>\e[0;37m", (int)VM.variables[var_Index].data);
+                 break;
+             case TYPE_STR:
+                 printf("%s\n\e[1;34m>>\e[0;37m", (char*)VM.variables[var_Index].data);
+                 break;
+             default:
+                 fprintf(stderr, "NJI\n");
+         }
+     }
     | loop '\n'      {printf("\n\e[1;34m>>\e[0;37m");}
+;
+
+system_setting:
+    SYSTEM system_setting_args      {
+        printf("bison got system settings!\n");
+    }
+;
+system_setting_args:
+    system_setting_args';'system_setting_args{
+        printf("got sub-system\n");
+    }
+    | IDENT EQ IDENT       {
+        printf("got id %s to id %s\n", $1, $3);
+        $$[0] = $1;
+        $$[1] = $3;
+    }
 ;
 
 assignment:
@@ -194,29 +216,29 @@ expression:
         }else if($2[0]=='/'){
             Opperator = DIV;
         }
-        switch(VM.stack.len){
+        switch(VM.stacks[0].len){
             case 0:
                 break;
             default:
                 switch(Opperator){
                     case ADD:
-                        if(stackPeek(&VM.stack)>Opperator+1){     // +1 so we start at sub and go up (mul, div, etc.)
-                            printf("open: got higher priority (%s > %s)\n", instructionsReadable((instruction)stackPeek(&VM.stack)), instructionsReadable(Opperator));
-                            for(int i=0; i<VM.stack.len; i++){
-                                void* Top_Opperator = stackPop(&VM.stack);
+                        if(stackPeek(&VM.stacks[0])>Opperator+1){     // +1 so we start at sub and go up (mul, div, etc.)
+                            printf("open: got higher priority (%s > %s)\n", instructionsReadable((instruction)stackPeek(&VM.stacks[0])), instructionsReadable(Opperator));
+                            for(int i=0; i<VM.stacks[0].len; i++){
+                                void* Top_Opperator = stackPop(&VM.stacks[0]);
                                 printf("\tgot %s\n", instructionsReadable((instruction)Top_Opperator));
-                                VM.queue = stackPush_Enqueue(VM.queue, Top_Opperator);
+                                VM.queues[0] = stackPush_Enqueue(VM.queues[0], Top_Opperator);
                             }
                         }
                 }
                 printf("open: adding %s\n", instructionsReadable(Opperator));
 
         }
-        bytecode New;
-        New.instruction = Opperator;
-        New.operantAmount = 2;
-        New.
-        VM.stack = stackPush_Enqueue(VM.stack, (void*)Opperator);
+        // bytecode New;
+        // New.opcode = Opperator;
+        // New.operantAmount = 2;
+        // New.
+        // VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opperator);
     }
     | PARENT_L                  {
         printf("got left parent\n");
@@ -232,24 +254,24 @@ expression:
     expression PLUS expression {$$=$1+$3; 
         instruction Opcode = ADD;
         printf("ADD operator start: \n");
-        switch(VM.stack.len){
+        switch(VM.stacks[0].len){
             case 0:
-                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+                VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opcode);
                 printf("stack empty\n");
                 break;
             default:
-            if(stackPeek(&VM.stack)>Opcode+1){  // +1 here so we get from sub, which is MUL and DIV
-                printf("got opcode of higher priority (%d); poping stack of len %d\n", stackPeek(&VM.stack), VM.stack.len);    
-                for(int i=0;i<VM.stack.len;i++){
-                    void* NextOpcode = stackPop(&VM.stack);
+            if(stackPeek(&VM.stacks[0])>Opcode+1){  // +1 here so we get from sub, which is MUL and DIV
+                printf("got opcode of higher priority (%d); poping stack of len %d\n", stackPeek(&VM.stacks[0]), VM.stacks[0].len);    
+                for(int i=0;i<VM.stacks[0].len;i++){
+                    void* NextOpcode = stackPop(&VM.stacks[0]);
                     printf("received code: %d;\n ", (int)NextOpcode);
-                    VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
+                    VM.queues[0] = stackPush_Enqueue(VM.queues[0], NextOpcode);
                 }
-                for(int i=0; i<VM.stack.len; i++){
-                    printf("\tstack elm %d = %d = %s\n", i, (int)VM.stack.data[i], instructionsReadable((instruction)VM.stack.data[i]));
+                for(int i=0; i<VM.stacks[0].len; i++){
+                    printf("\tstack elm %d = %d = %s\n", i, (int)VM.stacks[0].data[i], instructionsReadable((instruction)VM.stacks[0].data[i]));
                 }
             }
-            VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+            VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opcode);
         }
         printf("ADD operator end;\n");
     }
@@ -257,31 +279,31 @@ expression:
     | expression MINUS expression {$$ = $1 - $3;
         instruction Opcode = SUB;
         printf("SUB operator start: \n");
-        switch(VM.stack.len){
+        switch(VM.stacks[0].len){
             case 0:
-                VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+                VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opcode);
                 printf("stack empty\n");
                 break;
             default:
-            if(stackPeek(&VM.stack)>Opcode){  // +1 here so we get from sub, which is MUL and DIV
-                printf("got opcode of higher priority (%d); poping stack of len %d\n", stackPeek(&VM.stack), VM.stack.len);    
-                for(int i=0;i<VM.stack.len;i++){
-                    void* NextOpcode = stackPop(&VM.stack);
+            if(stackPeek(&VM.stacks[0])>Opcode){  // +1 here so we get from sub, which is MUL and DIV
+                printf("got opcode of higher priority (%d); poping stack of len %d\n", stackPeek(&VM.stacks[0]), VM.stacks[0].len);    
+                for(int i=0;i<VM.stacks[0].len;i++){
+                    void* NextOpcode = stackPop(&VM.stacks[0]);
                     printf("received code: %d;\n ", (int)NextOpcode);
-                    VM.queue = stackPush_Enqueue(VM.queue, NextOpcode);
+                    VM.queues[0] = stackPush_Enqueue(VM.queues[0], NextOpcode);
                 }
-                for(int i=0; i<VM.stack.len; i++){
-                    printf("\tstack elm %d = %d = %s\n", i, (int)VM.stack.data[i], instructionsReadable((instruction)VM.stack.data[i]));
+                for(int i=0; i<VM.stacks[0].len; i++){
+                    printf("\tstack elm %d = %d = %s\n", i, (int)VM.stacks[0].data[i], instructionsReadable((instruction)VM.stacks[0].data[i]));
                 }
             }
-            VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+            VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opcode);
         }
         printf("SUB end;\n");
     }
     | expression MULTIPLY expression { $$ = $1 * $3;
         instruction Opcode = MUL;
         printf("MUL opperator start: \n");
-        VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+        VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opcode);
         printf("MUL opperator end;\n");}
     | expression DIVIDE expression {
         if($3==0){
@@ -289,7 +311,7 @@ expression:
             $$ = 0;
         }else{
             instruction Opcode = DIV;
-            VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+            VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opcode);
             $$ = $1/$3;
         }
     }
@@ -299,7 +321,7 @@ factor:
     NUMBER              { 
         // store in stack so that we can apply shanting yard later in input/line;
         void* NumberPtr = (void*)$1;
-        VM.queue = stackPush_Enqueue(VM.queue, NumberPtr);        
+        VM.queues[0] = stackPush_Enqueue(VM.queues[0], NumberPtr);        
     }
     | IDENT             { 
         int var_Index = return_Index($1, VM.variableNames, VM.variableAmount);
@@ -322,15 +344,15 @@ factor:
     // int Found_Matching_Parent = 0;
     // int counter = 0;
     // return PARENT_R;
-    // void* Opperator = stackPop(&VM.stack);
+    // void* Opperator = stackPop(&VM.stacks[0]);
     // while(1){
-    //     printf("got %s, not at len of %d\n", (char*)Opperator, VM.queue.len);
-    //     VM.queue = stackPush_Enqueue(VM.queue, Opperator);
-    //     if(counter==VM.stack.len){
+    //     printf("got %s, not at len of %d\n", (char*)Opperator, VM.queues[0].len);
+    //     VM.queues[0] = stackPush_Enqueue(VM.queues[0], Opperator);
+    //     if(counter==VM.stacks[0].len){
     //         Found_Matching_Parent = 1;
     //     }
     // }
-    // VM.stack = stackPush_Enqueue(VM.stack, (void*)Opcode);
+    // VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opcode);
     // return PARENT_R;
 %%
   

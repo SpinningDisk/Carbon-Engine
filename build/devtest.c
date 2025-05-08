@@ -20,5 +20,9 @@
 
 
 int main(){
+    char* hans = "test";
+    char* peter = "peter";
+    char* gunter[] = {hans, peter};
+    printf("%s, %s\n", gunter[0], gunter[1]);
     return 0;
 }
