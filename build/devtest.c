@@ -1,5 +1,6 @@
 #include "include/functions.h"
 #include "include/engine.h"
+#include "include/language.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -19,8 +20,9 @@
 
 
 int main(){
-    //scene Main = __init_scene__("Main");
-    scene Main = __init_scene__("a");
-    printf("%s\n", Main.name);
-	return 0;
+    char* hans = "test";
+    char* peter = "peter";
+    char* gunter[] = {hans, peter};
+    printf("%s, %s\n", gunter[0], gunter[1]);
+    return 0;
 }

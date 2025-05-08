@@ -6,7 +6,7 @@ kwarg keys (arg values):
 2: object
 3: scene
 4: project*/
-#include "functions.h"
+#include "../include/functions.h"
 #include <stdlib.h>
 #include <stdio.h>
 
