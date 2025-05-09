@@ -1,6 +1,9 @@
 #ifndef LANGUAGE_H
 #define LANGUAGE_H
 
+#define system_knobs {"debug"}
+
+
 #include "engine.h"
 #include <stddef.h>
 

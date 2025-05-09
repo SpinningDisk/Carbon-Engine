@@ -537,10 +537,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    48,    48,    49,    50,    51,    57,    60,    64,    68,
-      72,    79,    80,    81,   100,   104,   109,   112,   120,   156,
-     157,   165,   166,   170,   179,   188,   208,   243,   246,   249,
-     321,   326,   340
+       0,    49,    49,    50,    51,    52,    58,    61,    65,    69,
+      73,    79,    80,    81,   100,   104,   109,   112,   120,   156,
+     157,   165,   166,   170,   179,   188,   208,   240,   243,   246,
+     318,   323,   337
 };
 #endif
 
@@ -589,8 +589,8 @@ static const yytype_int8 yypact[] =
      -14,   -14,   -14,   -14,    19,    21,   -14,    10,    12,    22,
        6,   -14,   -14,   -14,    -2,    54,    37,    53,    24,   -14,
      -14,   -14,    54,   -14,   -14,    51,    -1,    26,    57,    21,
-      60,    45,    54,    54,    43,   -14,   -14,    60,   -14,    24,
-     -14,    60,    60,    54,    60
+     -14,    44,    54,    54,    42,   -14,   -14,    62,   -14,    24,
+     -14,    62,    62,    54,    62
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -631,7 +631,7 @@ static const yytype_int8 yytable[] =
       30,    47,    23,     6,     7,    45,    51,    52,    -2,     1,
       31,    -2,    37,    39,    -2,    -2,    -2,    54,    -2,    -2,
       -2,    -2,    -2,    -2,    -2,    -2,    -2,     4,    38,    41,
-      23,     6,     7,    48,    32,    50,    53,    49
+      23,     6,     7,    48,    50,    53,    32,    49
 };
 
 static const yytype_int8 yycheck[] =
@@ -642,7 +642,7 @@ static const yytype_int8 yycheck[] =
       18,    37,     6,     7,     8,     9,    42,    43,     0,     1,
       18,     3,     5,    19,     6,     7,     8,    53,    10,    11,
       12,    13,    14,    15,    16,    17,    18,     3,     5,     8,
-       6,     7,     8,     6,     4,    20,    23,    39
+       6,     7,     8,     6,    20,    23,     4,    39
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -1136,13 +1136,13 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* input: input EXIT  */
-#line 50 "CES/grammar.y"
+#line 51 "CES/grammar.y"
                       {printf("bye!\n"); return 0;}
 #line 1142 "grammar.tab.c"
     break;
 
   case 5: /* input: input printstack  */
-#line 51 "CES/grammar.y"
+#line 52 "CES/grammar.y"
                           {
         printf("got len %d\n", VM.stacks[0].len);
         for(int i=0; i<VM.stacks[0].len; i++){
@@ -1153,7 +1153,7 @@ yyreduce:
     break;
 
   case 6: /* input: input printqueue  */
-#line 57 "CES/grammar.y"
+#line 58 "CES/grammar.y"
                         {for(int i=0; i<VM.queues[0].len; i++){
         printf("queue elm %d = %d\n", i, (int)VM.queues[0].data[i]);
     }}
@@ -1161,7 +1161,7 @@ yyreduce:
     break;
 
   case 7: /* input: input emptystack  */
-#line 60 "CES/grammar.y"
+#line 61 "CES/grammar.y"
                         {
         VM.stacks[0].data = (void**)malloc(sizeof(void*));
         VM.stacks[0].len = 0;
@@ -1170,7 +1170,7 @@ yyreduce:
     break;
 
   case 8: /* input: input emptyqueue  */
-#line 64 "CES/grammar.y"
+#line 65 "CES/grammar.y"
                         {
         VM.queues[0].data = (void**)malloc(sizeof(void*));
         VM.queues[0].len = 0;
@@ -1179,33 +1179,32 @@ yyreduce:
     break;
 
   case 9: /* input: error  */
-#line 68 "CES/grammar.y"
+#line 69 "CES/grammar.y"
                 {printf("\n\e[1;34m>>\e[0;37m");}
 #line 1185 "grammar.tab.c"
     break;
 
   case 10: /* line: expression '\n'  */
-#line 72 "CES/grammar.y"
-                    {printf("\n\e[1;34m>>\e[0;37m");
-        printf("\nline: jmpd\n");
+#line 73 "CES/grammar.y"
+                    {printf("%d\n\e[1;34m>>\e[0;37m", (yyvsp[-1].num));
         while(VM.stacks[0].len>0){
             printf("line: moved %s\n", instructionsReadable((instruction)stackPeek(&VM.stacks[0])));
             VM.queues[0] = stackPush_Enqueue(VM.queues[0], stackPop(&VM.stacks[0]));
         }
     }
-#line 1197 "grammar.tab.c"
+#line 1196 "grammar.tab.c"
     break;
 
   case 11: /* line: assignment '\n'  */
 #line 79 "CES/grammar.y"
                       {printf("\e[1;34m>>\e[0;37m");}
-#line 1203 "grammar.tab.c"
+#line 1202 "grammar.tab.c"
     break;
 
   case 12: /* line: system_setting '\n'  */
 #line 80 "CES/grammar.y"
                           {printf("\e[1;34m>>\e[0;37m");}
-#line 1209 "grammar.tab.c"
+#line 1208 "grammar.tab.c"
     break;
 
   case 13: /* line: IDENT '\n'  */
@@ -1229,13 +1228,13 @@ yyreduce:
                  fprintf(stderr, "NJI\n");
          }
      }
-#line 1233 "grammar.tab.c"
+#line 1232 "grammar.tab.c"
     break;
 
   case 14: /* line: loop '\n'  */
 #line 100 "CES/grammar.y"
                      {printf("\n\e[1;34m>>\e[0;37m");}
-#line 1239 "grammar.tab.c"
+#line 1238 "grammar.tab.c"
     break;
 
   case 15: /* system_setting: SYSTEM system_setting_args  */
@@ -1243,7 +1242,7 @@ yyreduce:
                                     {
         printf("bison got system settings!\n");
     }
-#line 1247 "grammar.tab.c"
+#line 1246 "grammar.tab.c"
     break;
 
   case 16: /* system_setting_args: system_setting_args ';' system_setting_args  */
@@ -1251,7 +1250,7 @@ yyreduce:
                                              {
         printf("got sub-system\n");
     }
-#line 1255 "grammar.tab.c"
+#line 1254 "grammar.tab.c"
     break;
 
   case 17: /* system_setting_args: IDENT EQ IDENT  */
@@ -1261,7 +1260,7 @@ yyreduce:
         (yyval.arrStr)[0] = (yyvsp[-2].str);
         (yyval.arrStr)[1] = (yyvsp[0].str);
     }
-#line 1265 "grammar.tab.c"
+#line 1264 "grammar.tab.c"
     break;
 
   case 18: /* assignment: lTYPE IDENT EQ value  */
@@ -1299,7 +1298,7 @@ yyreduce:
         }
 
     }
-#line 1303 "grammar.tab.c"
+#line 1302 "grammar.tab.c"
     break;
 
   case 20: /* value: STRING  */
@@ -1310,13 +1309,13 @@ yyreduce:
         String[strlen(String)-1]='\0';
         (yyval.str) = String;    
     }
-#line 1314 "grammar.tab.c"
+#line 1313 "grammar.tab.c"
     break;
 
   case 22: /* loop: WHILE PARENT_L condition PARENT_R '{'  */
 #line 166 "CES/grammar.y"
                                                 {printf("");}
-#line 1320 "grammar.tab.c"
+#line 1319 "grammar.tab.c"
     break;
 
   case 23: /* condition: expression '<' expression  */
@@ -1330,7 +1329,7 @@ yyreduce:
             (yyval.num) = 0;
         }
     }
-#line 1334 "grammar.tab.c"
+#line 1333 "grammar.tab.c"
     break;
 
   case 24: /* condition: expression '>' expression  */
@@ -1344,7 +1343,7 @@ yyreduce:
             (yyval.num) = 0;
         }
     }
-#line 1348 "grammar.tab.c"
+#line 1347 "grammar.tab.c"
     break;
 
   case 25: /* condition: expression '=' '=' expression  */
@@ -1358,12 +1357,12 @@ yyreduce:
             (yyval.num) = 0;
         }
     }
-#line 1362 "grammar.tab.c"
+#line 1361 "grammar.tab.c"
     break;
 
   case 26: /* expression: expression OPPER expression  */
 #line 208 "CES/grammar.y"
-                                {
+                                {           // we don't shunting yard anymore because we don't have priority anymore, so returning here would be a big nono
         instruction Opperator;
         if((yyvsp[-1].str)[0]=='+'){
             Opperator = ADD;
@@ -1392,50 +1391,47 @@ yyreduce:
                 printf("open: adding %s\n", instructionsReadable(Opperator));
 
         }
-        // bytecode New;
-        // New.opcode = Opperator;
-        // New.operantAmount = 2;
-        // New.
-        // VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opperator);
+        VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opperator);
+        printf("got lefthand: %d; opper: %s; righthand: %d\n", (yyvsp[-2].num), (yyvsp[-1].str), (yyvsp[0].num));
     }
-#line 1402 "grammar.tab.c"
+#line 1398 "grammar.tab.c"
     break;
 
   case 27: /* expression: PARENT_L  */
-#line 243 "CES/grammar.y"
+#line 240 "CES/grammar.y"
                                 {
         printf("got left parent\n");
     }
-#line 1410 "grammar.tab.c"
+#line 1406 "grammar.tab.c"
     break;
 
   case 28: /* expression: PARENT_R  */
-#line 246 "CES/grammar.y"
+#line 243 "CES/grammar.y"
                                 {
         printf("got right parent\n");
     }
-#line 1418 "grammar.tab.c"
+#line 1414 "grammar.tab.c"
     break;
 
   case 29: /* expression: factor  */
-#line 249 "CES/grammar.y"
+#line 246 "CES/grammar.y"
                                 {
     }
-#line 1425 "grammar.tab.c"
+#line 1421 "grammar.tab.c"
     break;
 
   case 30: /* factor: NUMBER  */
-#line 321 "CES/grammar.y"
+#line 318 "CES/grammar.y"
                         { 
         // store in stack so that we can apply shanting yard later in input/line;
         void* NumberPtr = (void*)(yyvsp[0].num);
         VM.queues[0] = stackPush_Enqueue(VM.queues[0], NumberPtr);        
     }
-#line 1435 "grammar.tab.c"
+#line 1431 "grammar.tab.c"
     break;
 
   case 31: /* factor: IDENT  */
-#line 326 "CES/grammar.y"
+#line 323 "CES/grammar.y"
                         { 
         int var_Index = return_Index((yyvsp[0].str), VM.variableNames, VM.variableAmount);
         if(var_Index<0){
@@ -1450,17 +1446,17 @@ yyreduce:
         }
         
     }
-#line 1454 "grammar.tab.c"
+#line 1450 "grammar.tab.c"
     break;
 
   case 32: /* factor: PARENT_L expression PARENT_R  */
-#line 340 "CES/grammar.y"
+#line 337 "CES/grammar.y"
                                     {(yyval.num) = (yyvsp[-1].num);}
-#line 1460 "grammar.tab.c"
+#line 1456 "grammar.tab.c"
     break;
 
 
-#line 1464 "grammar.tab.c"
+#line 1460 "grammar.tab.c"
 
       default: break;
     }
@@ -1653,7 +1649,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 357 "CES/grammar.y"
+#line 354 "CES/grammar.y"
 
   
 int yyerror(char *s) {

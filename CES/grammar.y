@@ -31,6 +31,7 @@ void zeroDivisionError(){
 %token <str> OPPER EQ IDENT PARENT_L PARENT_R STRING EXIT WHILE printstack printqueue emptystack emptyqueue
 %token <type> lTYPE
 %token <noReturn> SYSTEM
+%left OPPER
 
 %type <arrStr> system_setting_args
 %type <null> assignment
@@ -69,8 +70,7 @@ input:
 ;
 
 line:
-    expression '\n' {printf("\n\e[1;34m>>\e[0;37m");
-        printf("\nline: jmpd\n");
+    expression '\n' {printf("%d\n\e[1;34m>>\e[0;37m", $1);
         while(VM.stacks[0].len>0){
             printf("line: moved %s\n", instructionsReadable((instruction)stackPeek(&VM.stacks[0])));
             VM.queues[0] = stackPush_Enqueue(VM.queues[0], stackPop(&VM.stacks[0]));
@@ -205,7 +205,7 @@ condition:
 // todo: get term and thus factor into expression
 
 expression:
-    expression OPPER expression {
+    expression OPPER expression {           // we don't shunting yard anymore because we don't have priority anymore, so returning here would be a big nono
         instruction Opperator;
         if($2[0]=='+'){
             Opperator = ADD;
@@ -234,11 +234,8 @@ expression:
                 printf("open: adding %s\n", instructionsReadable(Opperator));
 
         }
-        // bytecode New;
-        // New.opcode = Opperator;
-        // New.operantAmount = 2;
-        // New.
-        // VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opperator);
+        VM.stacks[0] = stackPush_Enqueue(VM.stacks[0], (void*)Opperator);           // continue here; bison now reads left to right, meaning that we can apply shunting yard (partially-> test of precedence) at this level without the need to move up a layer
+        printf("got lefthand: %d; opper: %s; righthand: %d\n", $1, $2, $3);
     }
     | PARENT_L                  {
         printf("got left parent\n");

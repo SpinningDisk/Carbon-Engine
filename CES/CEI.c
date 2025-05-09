@@ -18,6 +18,9 @@ int main(){
     // void* test2 = stackPop(&VM.stack);
     // printf(" to %d by retrieving %d and %d\n", VM.stack.len, (int)test, (int)test2);
     // return 0;
+    // VM.stacks = (stack_queue*)malloc(sizeof(stack_queue)*2);
+    // VM.queues = (stack_queue*)malloc(sizeof(stack_queue)*2);
+    VM = bootVM();
     printf("\n\e[1;34m>>\e[0;37m");
     yyparse();
     return 0;

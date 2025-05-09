@@ -179,6 +179,11 @@ void* stackPeek(stack_queue* Stack){
     return Item;
 }
 
+void* stack_clear(stack_queue* Stack){
+    Stack->len = 0;
+    Stack->data = (void*)malloc(sizeof(void*));
+}
+
 // bytecode specific things;
 bytecode createBytecode(instruction Opcode, int Operant_Amount, void** Operants, bcTypes* Types){
     bytecode New_Code;
@@ -205,12 +210,19 @@ CEVM bootVM(void){
     VM.variableNames = (char**)malloc(sizeof(char*));
     VM.variableAmount = 0;
     VM.programHistory = (bytecode*)malloc(sizeof(bytecode));
-    stack_queue Stack;
-    Stack.data = (void**)malloc(sizeof(void*));
-    Stack.len = 0;
-    stack_queue Queue;
-    Queue.data = (void**)malloc(sizeof(void*));
-    Queue.len = 0;
+    VM.stacks = (stack_queue*)malloc(sizeof(stack_queue)*2);
+    VM.queues = (stack_queue*)malloc(sizeof(stack_queue)*2);
+    if(VM.stacks==NULL){
+        fprintf(stderr, "critical memory error during VM initalization\n");
+        return VM;
+    }else if(VM.stacks==NULL){
+        fprintf(stderr, "critical memory error during VM initalization\n");
+        return VM;
+    }
+    VM.stacks[0].data = (void**)malloc(sizeof(void*));
+    VM.stacks[0].len = 0;
+    VM.queues[0].data = (void**)malloc(sizeof(void*));
+    VM.queues[0].len = 0;
     return VM;
 }
 
