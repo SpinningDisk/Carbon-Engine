@@ -1,37 +1,23 @@
-#ifndef ENGINE_H
-#define ENGINE_H
-
-typedef float vertex[4];
-typedef vertex connection[2];
-typedef connection* area;
+typedef struct{
+    float x;
+    float y;
+    float z;
+}vertex;
 typedef struct{
     char* name;
-    int type;
-    vertex center;
     vertex* vertices;
-    connection* connnections;
-    area* areas;
     unsigned int vertexAmount;
+    unsigned int* edges[3];
+    unsigned int edgeAmount;
+    unsigned int** areas;
+    unsigned int areAmount;
+    vertex center;
     int id;
 }object;
 typedef struct{
     char* name;
     object* objects;
-    int objectAmount;
+    unsigned int objectAmount;
     char** objectNames;
-    int id;
-    // some settings
 }scene;
-typedef scene* project;
 
-
-// init functions
-object __init_object__(char* Name, int Type);
-scene __init_scene__(char* Name);
-
-
-// append functions
-object appendVertexToObject(vertex Vertex, object Object);
-scene appendObjectToScene(object Object, scene Scene);
-
-#endif

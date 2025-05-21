@@ -20,9 +20,9 @@
 
 
 int main(){
-    char* hans = "test";
-    char* peter = "peter";
-    char* gunter[] = {hans, peter};
-    printf("%s, %s\n", gunter[0], gunter[1]);
+    object hans = __init_object__("hans", 0);
+    scene peter = __init_scene__("peter");
+    peter = appendObjectToScene(hans, peter);
+    printf("%s\n", peter.objects[0].name);
     return 0;
 }

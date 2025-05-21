@@ -1,7 +1,7 @@
 CC = clang
 
 LibLoc = src/
-LanguageLoc = CES/
+LanguageLoc = CES_DEPRECATED/
 OutLoc = build/
 LibFunctionsSrc = functions.c 
 LibEngineSrc = engine.c
@@ -10,15 +10,15 @@ LibLanguageSrc = language.c
 GramerSrc = grammar.y
 
 
-LanguageOut = build/CES/CarbonEngineInterpreter.o
+LanguageOut = build/CES_DEPRECATED/CarbonEngineInterpreter.o
 
-.PHONY: static shared CEI app dev clean
+.PHONY: static shared CEI app dev clean repl
 
 # clang -o main.o -Wl,--whole-archive -I./include -L./lib -lengine -Wl,--no-whole-archive test.c -Wl,-rpath=./lib -Wall
 static:
 	cp include/engine.h $(OutLoc)include/
 	cp include/functions.h $(OutLoc)include/
-	cp include/language.h $(OutLoc)include/
+#	cp include/language.h $(OutLoc)include/
 
 	$(CC) -c -fPIC $(LibLoc)$(LibFunctionsSrc) -o $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o) -Wall -Wextra
 	ar rcs $(OutLoc)lib/lib$(LibFunctionsSrc:.c=.a) $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o)
@@ -27,9 +27,9 @@ static:
 	ld -r $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -L$(OutLoc)lib -lfunctions -o $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 	ar rcs $(OutLoc)lib/lib$(LibEngineSrc:.c=.a) $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 
-	$(CC) -c -fPIC $(LibLoc)$(LibLanguageSrc) -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -Wall -Wextra
-	ld -r $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L $(OutLoc)lib -lfunctions -lengine -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
-	ar rcs $(OutLoc)lib/lib$(LibLanguageSrc:.c=.a) $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
+#	$(CC) -c -fPIC $(LibLoc)$(LibLanguageSrc) -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -Wall -Wextra
+#	ld -r $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L $(OutLoc)lib -lfunctions -lengine -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
+#	ar rcs $(OutLoc)lib/lib$(LibLanguageSrc:.c=.a) $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
 
 
 # clang -o main.o -Wl,--whole-archive -I./include -L./lib -lfunctions -lengine -Wl,--no-whole-archive test.c -Wl,-rpath=./lib -Wall
@@ -74,8 +74,12 @@ CEI:
 	mv $(GramerSrc:.y=.tab.c) build/tmp/
 	mv $(GramerSrc:.y=.tab.h) build/include/
 	mv lex.yy.c $(OutLoc)tmp/lex.yy.c
+	$(CC) -o $(OutLoc)CarbonEngineInterpreter -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -llanguage -Wl,--no-whole-archive $(OutLoc)tmp/lex.yy.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
+	echo -e "\e[1;31mWARNING: THIS FUNCTION IS DEPRECATED; \e[0m"
 
-#	$(CC) -o $(OutLoc)CarbonEngineInterpreter -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -llanguage -Wl,--no-whole-archive $(OutLoc)tmp/lex.yy.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
+repl:
+	make static
+	$(CC) -o $(OutLoc)cerepl -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive CEREPL/main.c
 
 dev:
 	cp include/engine.h $(OutLoc)include/
