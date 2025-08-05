@@ -4,10 +4,12 @@ LibLoc = src/
 LanguageLoc = CES_DEPRECATED/
 OutLoc = build/
 LibFunctionsSrc = functions.c 
-LibEngineSrc = engine.c
+LibEngineSrc = kernel.c
 LanguageSrc = lexer.l
 LibLanguageSrc = language.c
 GramerSrc = grammar.y
+binderSrc = engine.c
+binderLoc = EngineDispatcher/
 
 
 LanguageOut = build/CES_DEPRECATED/CarbonEngineInterpreter.o
@@ -16,10 +18,10 @@ LanguageOut = build/CES_DEPRECATED/CarbonEngineInterpreter.o
 
 # clang -o main.o -Wl,--whole-archive -I./include -L./lib -lengine -Wl,--no-whole-archive test.c -Wl,-rpath=./lib -Wall
 static:
+	cp include/$(LibEngineSrc:.c=.h) $(OutLoc)include/
+	cp include/$(LibFunctionsSrc:.c=.h) $(OutLoc)include/
 	cp include/engine.h $(OutLoc)include/
-	cp include/functions.h $(OutLoc)include/
-#	cp include/language.h $(OutLoc)include/
-
+	
 	$(CC) -c -fPIC $(LibLoc)$(LibFunctionsSrc) -o $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o) -Wall -Wextra
 	ar rcs $(OutLoc)lib/lib$(LibFunctionsSrc:.c=.a) $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o)
 
@@ -27,6 +29,13 @@ static:
 	ld -r $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -L$(OutLoc)lib -lfunctions -o $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 	ar rcs $(OutLoc)lib/lib$(LibEngineSrc:.c=.a) $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
 
+	$(CC) -c -fPIC $(binderLoc)$(binderSrc) -o $(OutLoc)tmp/$(binderSrc:.c=.o) -Wall -Wextra -I$(OutLoc)include
+	ld -r $(OutLoc)tmp/$(binderSrc:.c=.o) -L$(OutLoc)lib -lkernel -o $(OutLoc)tmp/$(binderSrc:.c=.linked.o)
+	ar rcs $(OutLoc)lib/lib$(binderSrc:.c=.a) $(OutLoc)tmp/$(binderSrc:.c=.linked.o)
+	
+	
+#	$(CC) -o $(OutLoc)tmp/$(binderSrc:.c=.o) -Wl,--whole-archive -I../$(OutLoc)include -L../$(OutLoc)lib -lengine -Wl,--no-whole-archive $(binderLoc)/$(binderSrc) -Wl,-rpath=../$(OutLoc)lib -Wall -Wextra 
+#	$(CC) -c -fPIC 
 #	$(CC) -c -fPIC $(LibLoc)$(LibLanguageSrc) -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -Wall -Wextra
 #	ld -r $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L $(OutLoc)lib -lfunctions -lengine -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
 #	ar rcs $(OutLoc)lib/lib$(LibLanguageSrc:.c=.a) $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
@@ -82,24 +91,8 @@ repl:
 	$(CC) -o $(OutLoc)cerepl -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive CEREPL/main.c
 
 dev:
-	cp include/engine.h $(OutLoc)include/
-	cp include/functions.h $(OutLoc)include/
-	cp include/language.h $(OutLoc)include/
-
-
-	$(CC) -c -fPIC $(LibLoc)$(LibFunctionsSrc) -o $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o) -Wall -Wextra
-	ar rcs $(OutLoc)lib/lib$(LibFunctionsSrc:.c=.a) $(OutLoc)tmp/$(LibFunctionsSrc:.c=.o)
-
-	$(CC) -c -fPIC $(LibLoc)$(LibEngineSrc) -o $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -Wall -Wextra -I$(OutLoc)include
-	ld -r $(OutLoc)tmp/$(LibEngineSrc:.c=.o) -L$(OutLoc)lib -lfunctions -o $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
-	ar rcs $(OutLoc)lib/lib$(LibEngineSrc:.c=.a) $(OutLoc)tmp/$(LibEngineSrc:.c=.linked.o)
-
-	$(CC) -c -fPIC $(LibLoc)$(LibLanguageSrc) -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -Wall -Wextra
-	ld -r $(OutLoc)tmp/$(LibLanguageSrc:.c=.o) -L $(OutLoc)lib -lfunctions -lengine -o $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
-	ar rcs $(OutLoc)lib/lib$(LibLanguageSrc:.c=.a) $(OutLoc)tmp/$(LibLanguageSrc:.c=.linked.o)
-
-
-	$(CC) -o $(OutLoc)main.o -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lfunctions -lengine -Wl,--no-whole-archive $(OutLoc)devtest.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra	
+	make static
+	$(CC) -o $(OutLoc)main.o -Wl,--whole-archive -I$(OutLoc)/include -L$(OutLoc)/lib -lengine -lm -Wl,--no-whole-archive $(OutLoc)devtest.c -Wl,-rpath=$(OutLoc)/lib -Wall -Wextra -g
 	$(OutLoc)main.o
 clean:
 	rm -rf $(OutLoc)lib $(OutLoc)include $(OutLoc)tmp $(OutLoc)CEI

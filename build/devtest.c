@@ -1,9 +1,7 @@
-#include "include/functions.h"
 #include "include/engine.h"
-#include "include/language.h"
+#include "include/kernel.h"
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+
 
 /*scene appendObjectToScene(scene Scene, object Object){
     Scene.objects = (object*)realloc(Scene.objects, sizeof(object)*(Scene.objectCount+2));
@@ -16,13 +14,10 @@
     printf("\tname right before: %s\n", Scene.objects[Scene.objectCount-1].name);
     return Scene;
 }*/
-
-
-
 int main(){
-    object hans = __init_object__("hans", 0);
-    scene peter = __init_scene__("peter");
-    peter = appendObjectToScene(hans, peter);
-    printf("%s\n", peter.objects[0].name);
+    _kernel Kernel = __binder__();
+    
+    // void *myVertex = Kernel.vertex_();
+    // setVertex(myVertex, {1.1, 2.2, 3.3});
     return 0;
 }
